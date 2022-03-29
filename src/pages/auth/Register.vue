@@ -2,7 +2,7 @@
   <q-page class="window-height window-width row justify-center items-center">
     <div class="column">
       <div class="row">
-        <h5 class="text-h5 text-white q-my-md">Skeleton Pos</h5>
+        <h5 class="text-h5 text-white q-my-md">Register</h5>
       </div>
       <div class="row">
         <q-card square bordered class="q-pa-lg shadow-1">
@@ -12,9 +12,27 @@
                 square
                 filled
                 clearable
+                v-model="first_name"
+                type="text"
+                label="First Name"
+                color="orange"
+              />
+              <q-input
+                square
+                filled
+                clearable
+                v-model="last_name"
+                type="text"
+                label="Last Name"
+                color="orange"
+              />
+              <q-input
+                square
+                filled
+                clearable
                 v-model="email"
                 type="email"
-                label="email"
+                label="Email"
                 color="orange"
               />
               <q-input
@@ -34,11 +52,11 @@
               color="orange"
               size="lg"
               class="full-width"
-              label="Login"
+              label="Register"
             />
           </q-card-actions>
           <q-card-section class="text-center q-pa-none">
-            <q-btn flat color="orange" label="Register" to="register" />
+            <q-btn flat color="orange" label="Login" to="login" />
           </q-card-section>
         </q-card>
       </div>

@@ -11,7 +11,7 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
+        <q-toolbar-title> Skeleton Pos </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
@@ -22,7 +22,7 @@
         <q-item-label header> Essential Links </q-item-label>
 
         <EssentialLink
-          v-for="link in essentialLinks"
+          v-for="link in linksList"
           :key="link.title"
           v-bind="link"
         />
@@ -34,7 +34,7 @@
   </q-layout>
 </template>
 
-<script>
+<script setup>
 import { defineComponent, ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 
@@ -83,23 +83,28 @@ const linksList = [
   },
 ];
 
-export default defineComponent({
-  name: "MainLayout",
+let leftDrawerOpen = $ref(false);
+const toggleLeftDrawer = async () => {
+  leftDrawerOpen = !leftDrawerOpen;
+};
 
-  components: {
-    EssentialLink,
-  },
+// export default defineComponent({
+//   name: "MainLayout",
 
-  setup() {
-    const leftDrawerOpen = ref(false);
+//   components: {
+//     EssentialLink,
+//   },
 
-    return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-    };
-  },
-});
+//   setup() {
+//     const leftDrawerOpen = ref(false);
+
+//     return {
+//       essentialLinks: linksList,
+//       leftDrawerOpen,
+//       toggleLeftDrawer() {
+//         leftDrawerOpen.value = !leftDrawerOpen.value;
+//       },
+//     };
+//   },
+// });
 </script>
