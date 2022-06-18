@@ -8,7 +8,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <p>Bar</p>
+                    <p>Kitchen</p>
                 </div>
                 <div class="col-md-6">
                     <div class="q-gutter-md">
@@ -77,8 +77,8 @@ const options = ['half', 'full'];
 let option = $ref('half');
 
 // The section or till
-const sectionOptions = ['till01', 'juice', 'desert'];
-let sectionOption = $ref('till01');
+const sectionOptions = ['friyer', 'teppan', 'kitchen'];
+let sectionOption = $ref('friyer');
 
 </script>
 
