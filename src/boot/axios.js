@@ -1,4 +1,6 @@
 import axios from "axios";
+// Import the quasar framework notifier
+import { Notify } from 'quasar';
 
 const api = axios.create({});
 
@@ -22,7 +24,14 @@ api.interceptors.response.use(
     ) {
       console.log("403");
     } else if (status === 400) {
-      console.log("400");
+      // Validation error
+      for (const [key, value] of Object.entries(error.response.data)) {
+        // Display a notification
+        Notify.create({
+          message: value[0],
+          color: 'red'
+        });
+      }
     }
     return Promise.reject(error);
   }
