@@ -41,7 +41,11 @@ import * as storage from "../../boot/storage";
 // import the endpoint
 import { url } from "../../boot/endpoint";
 // Import the router
-import { router } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router'
+// Route Reference
+const route = useRoute();
+const router = useRouter()
+
 let email = $ref('');
 let password = $ref('');
 console.log(router);
@@ -59,6 +63,7 @@ const submitLogin = async () => {
                 message: 'Login Successful',
                 color: 'green'
             });
+            router.push('/pos');
         });
 };
 
