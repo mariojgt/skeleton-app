@@ -6,15 +6,21 @@
             </div>
             <div class="row">
                 <q-card square bordered class="q-pa-lg shadow-1">
-                    <q-form class="q-gutter-md">
-                        <q-input square filled clearable v-model="code" type="text" label="Code" color="orange" />
-                        <q-card-actions class="q-px-md">
-                            <q-btn unelevated color="orange" size="lg" class="full-width" label="Login" type="submit" />
-                        </q-card-actions>
-                        <q-card-section class="text-center q-pa-none">
-                            <q-btn flat color="orange" label="Register" to="register" />
-                        </q-card-section>
-                    </q-form>
+                    <q-card-section>
+                        <q-form class="q-gutter-md">
+                            <q-input square filled clearable v-model="email" type="email" label="Email"
+                                color="orange" />
+                            <q-input square filled clearable v-model="password" type="password" label="Password"
+                                color="orange" />
+                        </q-form>
+                    </q-card-section>
+                    <q-card-actions class="q-px-md">
+                        <q-btn unelevated color="orange" size="lg" class="full-width" label="Login" />
+                    </q-card-actions>
+                    <q-card-section class="text-center q-pa-none">
+                        <q-btn flat color="orange" label="Register" to="register" />
+                        <q-btn flat color="orange" label="Reset Password" to="forgot_password" />
+                    </q-card-section>
                 </q-card>
             </div>
         </div>
@@ -24,5 +30,6 @@
 <script setup>
 import { defineComponent } from "vue";
 
-let code = $ref("");
+let email = $ref('');
+let password = $ref('');
 </script>
