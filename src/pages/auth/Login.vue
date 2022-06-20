@@ -48,7 +48,7 @@ const router = useRouter()
 
 let email = $ref('');
 let password = $ref('');
-console.log(router);
+
 const submitLogin = async () => {
     axios.post(url('backend/login'), {
         email: email,
