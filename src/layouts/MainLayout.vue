@@ -6,7 +6,37 @@
 
                 <q-toolbar-title> Skeleton Pos </q-toolbar-title>
 
-                <div>Quasar v{{ $q.version }}</div>
+                <div class="q-pa-sm">
+                    <q-btn-dropdown color="orange">
+                        <template v-slot:label>
+                            <div class="row items-center no-wrap">
+                                <q-avatar>
+                                    <img src="https://cdn.quasar.dev/img/avatar.png">
+                                </q-avatar>
+                            </div>
+                        </template>
+                        <q-list>
+
+                            <q-item clickable v-close-popup tag="a" to="user-profile">
+                                <q-item-section>
+                                    <q-item-label>My Profile</q-item-label>
+                                </q-item-section>
+                            </q-item>
+
+                            <q-item clickable v-close-popup tag="a" to="/logout">
+                                <q-item-section>
+                                    <q-item-label>Logout</q-item-label>
+                                </q-item-section>
+                            </q-item>
+
+                            <q-item disable>
+                                <q-item-section>
+                                    <q-item-label>V {{ $q.version }}</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                    </q-btn-dropdown>
+                </div>
             </q-toolbar>
         </q-header>
 
@@ -64,11 +94,11 @@ const linksList = [
         icon: "public",
         link: "https://facebook.quasar.dev",
     },
-    {
-        title: "Logout",
-        icon: "favorite",
-        link: "logout",
-    },
+    // {
+    //     title: "Logout",
+    //     icon: "favorite",
+    //     link: "logout",
+    // },
 ];
 
 let leftDrawerOpen = $ref(false);

@@ -24,6 +24,16 @@ async function checkAuth(to) {
 }
 
 export default [
+    // Users routes
+    {
+        path: "/user/view",
+        parameters: { user: String },
+        component: () => import("layouts/MainLayout.vue"),
+        children: [
+            { path: "", component: () => import("src/pages/user/view.vue") },
+        ],
+        beforeEnter: [checkAuth]
+    },
     // The main page need to be login to access
     {
         path: "/pos",
