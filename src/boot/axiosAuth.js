@@ -2,7 +2,7 @@ import axios from "axios";
 // Import the quasar framework notifier
 import { Notify } from 'quasar';
 // Import the storage
-import * as storage from "../boot/storage.js";
+import * as storage from "../boot/storage";
 
 const api = axios.create({});
 

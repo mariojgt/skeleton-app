@@ -13,7 +13,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col">Third, but test</div>
+                <div class="col">Third, selft test</div>
             </div>
         </div>
     </q-page>

@@ -30,7 +30,7 @@ export default [
         parameters: { user: String },
         component: () => import("layouts/MainLayout.vue"),
         children: [
-            { path: "", component: () => import("src/pages/user/view.vue") },
+            { path: "", component: () => import("src/pages/user/View.vue") },
         ],
         beforeEnter: [checkAuth]
     },
@@ -39,7 +39,7 @@ export default [
         path: "/pos",
         component: () => import("layouts/MainLayout.vue"),
         children: [
-            { path: "", component: () => import("src/pages/pos/index.vue") },
+            { path: "", component: () => import("src/pages/pos/Index.vue") },
         ],
         beforeEnter: [checkAuth]
     }

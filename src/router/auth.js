@@ -1,7 +1,7 @@
 // import the endpoint
-import { url } from "../boot/endpoint.js";
+import { url } from "../boot/endpoint";
 // Import the axios
-import { api } from "../boot/axiosAuth.js";
+import { api } from "../boot/axiosAuth";
 const axios = api;
 
 export default [
