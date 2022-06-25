@@ -20,9 +20,24 @@
                                         <div class="text-h4 q-mb-md">Details</div>
                                         <div class="q-pa-md">
                                             <q-form @submit="onSubmitBasicInformation" @reset="onReset">
-                                                <q-avatar size="100px">
-                                                    <img :src="userInfo.avatar">
-                                                </q-avatar>
+                                                <q-file filled bottom-slots v-model="file" label="Avatar">
+                                                    <template v-slot:before>
+                                                        <q-avatar size="100px">
+                                                            <img :src="userInfo.avatar">
+                                                        </q-avatar>
+                                                    </template>
+
+                                                    <template v-slot:append>
+                                                        <q-icon v-if="file !== null" name="close"
+                                                            @click.stop="file = null" class="cursor-pointer" />
+                                                        <q-icon name="create_new_folder" @click.stop />
+                                                    </template>
+
+                                                    <template v-slot:after>
+                                                        <q-btn round dense flat icon="send"
+                                                            @click="onSubmitNewAvatar" />
+                                                    </template>
+                                                </q-file>
                                                 <q-input filled v-model="userInfo.first_name" label="First Name"
                                                     class="q-pa-sm" />
                                                 <q-input filled v-model="userInfo.last_name" label="Last Name"
@@ -86,7 +101,7 @@ const onSubmitBasicInformation = async () => {
         {
             first_name: userInfo.first_name,
             last_name: userInfo.last_name,
-            email: null,
+            email: userInfo.email,
         })
         .then(function (response) {
             Notify.create({
@@ -110,5 +125,25 @@ const onSubmitPasswordUpdate = async () => {
         });
 }
 
+let file = $ref(null);
+
+const onSubmitNewAvatar = async () => {
+
+    let formData = new FormData();
+    formData.append('file', file);
+
+    // Upload with headers
+    await axios.post(url('user/avatar'), formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+        .then(function (response) {
+            Notify.create({
+                message: 'Avatar updated successfully',
+                color: 'green'
+            });
+        });
+}
 
 </script>
