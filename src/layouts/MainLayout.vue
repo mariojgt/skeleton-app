@@ -4,7 +4,11 @@
             <q-toolbar class="bg-dark">
                 <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
-                <q-toolbar-title> Skeleton Pos </q-toolbar-title>
+                <q-toolbar-title>
+                    <q-item clickable tag="a" to="/pos">
+                        Skeleton Pos
+                    </q-item>
+                </q-toolbar-title>
 
                 <div class="q-pa-sm">
                     <q-btn-dropdown color="orange">
@@ -51,6 +55,7 @@
         <q-page-container>
             <router-view />
         </q-page-container>
+        <q-ajax-bar ref="bar" position="bottom" color="orange" size="10px" />
     </q-layout>
 </template>
 
