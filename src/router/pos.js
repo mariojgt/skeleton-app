@@ -1,31 +1,5 @@
-// import the endpoint
-import { url } from "../boot/endpoint";
-// Import the axios
-import { api } from "../boot/axiosAuth";
-const axios = api;
-// Import the storage
-import * as storage from "../boot/storage";
-
-async function checkAuth(to) {
-    let canContinue = false;
-    // Does a axios request to check if the token is valid
-    await axios.post(url('user/info'))
-        .then(function (response) {
-            canContinue = true;
-            storage.setUserInfo(response.data.data);
-        })
-        .catch(function (error) {
-            canContinue = false;
-            storage.setUserInfo(null);
-        });
-    // Wait for the response
-    if (canContinue == false) {
-        return {
-            path: '/login',
-            query: {},
-        };
-    }
-}
+// import the middleware to check if the user is logged in
+import * as auth from "../boot/middleware/auth";
 
 export default [
     // Users routes
@@ -39,7 +13,7 @@ export default [
                 parameters: { user: String },
             },
         ],
-        beforeEnter: [checkAuth]
+        beforeEnter: [auth.checkAuth]
     },
     // The main page need to be login to access
     {
@@ -48,6 +22,6 @@ export default [
         children: [
             { path: "", component: () => import("src/pages/pos/Index.vue") },
         ],
-        beforeEnter: [checkAuth]
+        beforeEnter: [auth.checkAuth]
     }
 ];

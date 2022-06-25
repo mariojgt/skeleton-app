@@ -40,8 +40,17 @@ api.interceptors.response.use(
         ) {
             console.log("403");
         } else if (status === 400) {
-            // Validation error
+            // Validation error manually handled
             for (const [key, value] of Object.entries(error.response.data)) {
+                // Display a notification
+                Notify.create({
+                    message: value[0],
+                    color: 'red'
+                });
+            }
+        } else if (status === 422) {
+            // Validation error automatically handled
+            for (const [key, value] of Object.entries(error.response.data.errors)) {
                 // Display a notification
                 Notify.create({
                     message: value[0],

@@ -4,12 +4,18 @@ import { url } from "../boot/endpoint";
 import { api } from "../boot/axiosAuth";
 const axios = api;
 
+// import the middleware to check if the user is logged in
+import * as auth from "../boot/middleware/auth";
+
 export default [
     {
         name: "login",
         path: "/login",
         component: () => import("layouts/Login.vue"),
-        children: [{ path: "", component: () => import("pages/auth/Login.vue") }],
+        children: [
+            { path: "", component: () => import("pages/auth/Login.vue") }
+        ],
+        beforeEnter: [auth.isAuthenticated]
     },
     {
         name: "logout",
@@ -30,6 +36,7 @@ export default [
         children: [
             { path: "", component: () => import("pages/auth/Register.vue") },
         ],
+        beforeEnter: [auth.isAuthenticated]
     },
     {
         name: "forgot_password",
@@ -38,6 +45,7 @@ export default [
         children: [
             { path: "", component: () => import("pages/auth/Forgot.vue") },
         ],
+        beforeEnter: [auth.isAuthenticated]
     },
     {
         name: "reset",
@@ -47,5 +55,6 @@ export default [
         children: [
             { path: "", component: () => import("pages/auth/Reset.vue") },
         ],
+        beforeEnter: [auth.isAuthenticated]
     },
 ];

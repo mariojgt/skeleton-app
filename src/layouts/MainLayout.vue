@@ -11,13 +11,14 @@
                         <template v-slot:label>
                             <div class="row items-center no-wrap">
                                 <q-avatar>
-                                    <img src="https://cdn.quasar.dev/img/avatar.png">
+                                    <img :src="userInfo.avatar">
                                 </q-avatar>
+                                <p class="q-pa-sm">{{ userInfo.full_name }}</p>
                             </div>
                         </template>
                         <q-list>
 
-                            <q-item clickable v-close-popup tag="a" to="user-profile">
+                            <q-item clickable v-close-popup tag="a" to="/user/profile">
                                 <q-item-section>
                                     <q-item-label>My Profile</q-item-label>
                                 </q-item-section>
@@ -54,6 +55,11 @@
 </template>
 
 <script setup>
+// Import the storage
+import * as storage from "../boot/storage";
+// User basic info
+let userInfo = storage.getUserInfo();
+
 import { defineComponent, ref } from "vue";
 import EssentialLink from "components/EssentialLink";
 
