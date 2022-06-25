@@ -1,8 +1,10 @@
 // import the endpoint
-import { url } from "../boot/endpoint.js";
+import { url } from "../boot/endpoint";
 // Import the axios
-import { api } from "../boot/axiosAuth.js";
+import { api } from "../boot/axiosAuth";
 const axios = api;
+// Import the storage
+import * as storage from "../boot/storage";
 
 async function checkAuth(to) {
     let canContinue = false;
@@ -10,9 +12,11 @@ async function checkAuth(to) {
     await axios.post(url('user/info'))
         .then(function (response) {
             canContinue = true;
+            storage.setUserInfo(response.data.data);
         })
         .catch(function (error) {
             canContinue = false;
+            storage.setUserInfo(null);
         });
     // Wait for the response
     if (canContinue == false) {
@@ -26,11 +30,14 @@ async function checkAuth(to) {
 export default [
     // Users routes
     {
-        path: "/user/view",
-        parameters: { user: String },
+        path: "/user",
         component: () => import("layouts/MainLayout.vue"),
         children: [
-            { path: "", component: () => import("src/pages/user/View.vue") },
+            {
+                path: "profile",
+                component: () => import("src/pages/user/View.vue"),
+                parameters: { user: String },
+            },
         ],
         beforeEnter: [checkAuth]
     },
