@@ -38,7 +38,7 @@ export default [
         path: "/bar",
         component: () => import("layouts/MainLayout.vue"),
         children: [
-            { path: "", component: () => import("src/pages/barMode/_Index.vue") },
+            { path: "", component: () => import("src/pages/barMode/Index.vue") },
         ],
         beforeEnter: [auth.checkAuth]
     },
