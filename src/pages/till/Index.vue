@@ -29,12 +29,12 @@
                                 <tr v-for="(item, index) in tills" :key="index">
                                     <td class="text-left">
                                         <q-input filled v-model="tills[index].name" label="Till Name"
-                                            @blur="updateInformation" />
+                                            @blur="updateInformation(index)" />
                                     </td>
                                     <td class="text-right">bar</td>
                                     <td class="text-right">
                                         <q-toggle v-model="tills[index].is_active" label="Is Enable"
-                                            @click="updateInformation" />
+                                            @click="updateInformation(index)" />
                                     </td>
                                 </tr>
                             </tbody>
@@ -112,9 +112,10 @@ onMounted(() => {
 });
 
 
-const updateInformation = async () => {
-    await axios.patch(url('tills/update'), {
-        tills: tills
+const updateInformation = async (arrayIndex) => {
+    await axios.patch(url('tills/update/' + tills[arrayIndex].id), {
+        name: tills[arrayIndex].name,
+        is_active: tills[arrayIndex].is_active,
     })
         .then(function (response) {
             Notify.create({
