@@ -38,7 +38,25 @@ export default [
         path: "/bar",
         component: () => import("layouts/MainLayout.vue"),
         children: [
-            { path: "", component: () => import("src/pages/barMode/Index.vue") },
+            { path: "", component: () => import("src/pages/barMode/_Index.vue") },
+        ],
+        beforeEnter: [auth.checkAuth]
+    },
+    // Order Mode
+    {
+        path: "/order",
+        component: () => import("layouts/MainLayout.vue"),
+        children: [
+            { path: "", component: () => import("src/pages/orderMode/Index.vue") },
+        ],
+        beforeEnter: [auth.checkAuth]
+    },
+    // Kitchen
+    {
+        path: "/kitchen",
+        component: () => import("layouts/MainLayout.vue"),
+        children: [
+            { path: "", component: () => import("src/pages/kitchenMode/Index.vue") },
         ],
         beforeEnter: [auth.checkAuth]
     },
