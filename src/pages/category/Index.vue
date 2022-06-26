@@ -10,31 +10,23 @@
                                     <th colspan="5">
                                         <div class="row no-wrap items-center">
                                             <q-icon :name="mdiCashRegister" color="orange" size="70px" />
-                                            <div class="text-h4 q-ml-md text-white">Tills</div>
-                                        </div>
-                                        <div class="text-h4 q-ml-md text-white text-right">
-                                            <q-select v-model="filter" :options="tillOptions" @blur="loadInformation"
-                                                label="Filter" />
+                                            <div class="text-h4 q-ml-md text-white">Category</div>
                                         </div>
                                     </th>
                                 </tr>
                                 <tr>
                                     <th class="text-left">Name</th>
-                                    <th class="text-right">Section</th>
                                     <th class="text-right">Is Active</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(item, index) in tills" :key="index">
+                                <tr v-for="(item, index) in categories" :key="index">
                                     <td class="text-left">
-                                        <q-input filled v-model="tills[index].name" label="Till Name"
+                                        <q-input filled v-model="categories[index].name" label="Till Name"
                                             @blur="updateInformation(index)" />
                                     </td>
                                     <td class="text-right">
-                                        {{ item.section }}
-                                    </td>
-                                    <td class="text-right">
-                                        <q-toggle v-model="tills[index].is_active" label="Is Enable"
+                                        <q-toggle v-model="categories[index].is_active" label="Is Enable"
                                             @click="updateInformation(index)" />
                                     </td>
                                 </tr>
@@ -92,18 +84,13 @@ let userInfo = $ref(storage.getUserInfo());
 const route = useRoute();
 const router = useRouter();
 
-const tillOptions = ['bar', 'kitchen', 'all'];
-let filter = $ref('bar');
-
-let tills = $ref([]);
+let categories = $ref([]);
 const loadInformation = async () => {
-    await axios.post(url('tills'), {
-        section: filter
-    })
+    await axios.post(url('category'))
         .then(function (response) {
-            tills = response.data.data;
+            categories = response.data.data;
             Notify.create({
-                message: 'Till loaded',
+                message: 'Category loaded',
                 color: 'green'
             });
         });
@@ -115,13 +102,13 @@ onMounted(() => {
 
 
 const updateInformation = async (arrayIndex) => {
-    await axios.patch(url('tills/update/' + tills[arrayIndex].id), {
-        name: tills[arrayIndex].name,
-        is_active: tills[arrayIndex].is_active,
+    await axios.patch(url('category/update/' + categories[arrayIndex].id), {
+        name: categories[arrayIndex].name,
+        is_active: categories[arrayIndex].is_active,
     })
         .then(function (response) {
             Notify.create({
-                message: 'Till updated',
+                message: 'Category updated',
                 color: 'green'
             });
         });
@@ -134,14 +121,13 @@ let name = $ref('');
 let isActive = $ref(true);
 
 const createInformation = async () => {
-    await axios.post(url('tills/create'), {
+    await axios.post(url('category/create'), {
         name: name,
-        is_active: isActive,
-        section: filter
+        is_active: isActive
     })
         .then(function (response) {
             Notify.create({
-                message: 'Till updated',
+                message: 'Category updated',
                 color: 'green'
             });
         });
