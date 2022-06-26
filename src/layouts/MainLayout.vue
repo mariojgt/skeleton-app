@@ -48,7 +48,6 @@
         <q-drawer v-model="leftDrawerOpen" bordered>
             <q-list>
                 <q-item-label header> Essential Links </q-item-label>
-
                 <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
             </q-list>
         </q-drawer>
@@ -64,13 +63,14 @@
 import * as storage from "../boot/storage";
 // User basic info
 let userInfo = storage.getUserInfo();
+import { mdiCashRegister } from '@mdi/js';
 import { defineComponent, ref } from "vue";
 import EssentialLink from "components/EssentialLink";
 const linksList = [
     {
         title: "Till",
         caption: "Setup, bar, kitchen, and more",
-        icon: "school",
+        icon: mdiCashRegister,
         link: "/till/index",
     },
     {

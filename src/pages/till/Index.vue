@@ -9,8 +9,7 @@
                                 <tr>
                                     <th colspan="5">
                                         <div class="row no-wrap items-center">
-                                            <q-img style="width: 70px" :ratio="1" class="rounded-borders"
-                                                src="https://cdn.quasar.dev/img/donuts.png" />
+                                            <q-icon :name="mdiCashRegister" color="orange" size="70px" />
                                             <div class="text-h4 q-ml-md text-white">Tills</div>
                                         </div>
                                         <div class="text-h4 q-ml-md text-white text-right">
@@ -71,6 +70,7 @@
 </template>
 
 <script setup>
+import { mdiCashRegister } from '@mdi/js';
 import { onMounted, watch } from "vue";
 import { useRoute, useRouter } from 'vue-router'
 
