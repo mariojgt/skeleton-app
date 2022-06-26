@@ -68,10 +68,10 @@ import { defineComponent, ref } from "vue";
 import EssentialLink from "components/EssentialLink";
 const linksList = [
     {
-        title: "Docs",
-        caption: "quasar.dev",
+        title: "Till",
+        caption: "Setup, bar, kitchen, and more",
         icon: "school",
-        link: "https://quasar.dev",
+        link: "/till/index",
     },
     {
         title: "Github",

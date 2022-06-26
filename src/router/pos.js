@@ -23,5 +23,23 @@ export default [
             { path: "", component: () => import("src/pages/pos/Index.vue") },
         ],
         beforeEnter: [auth.checkAuth]
-    }
+    },
+    // Till routes
+    {
+        path: "/till",
+        component: () => import("layouts/MainLayout.vue"),
+        children: [
+            { path: "index", component: () => import("src/pages/till/Index.vue") },
+        ],
+        beforeEnter: [auth.checkAuth]
+    },
+    // Bar
+    {
+        path: "/bar",
+        component: () => import("layouts/MainLayout.vue"),
+        children: [
+            { path: "", component: () => import("src/pages/barMode/Index.vue") },
+        ],
+        beforeEnter: [auth.checkAuth]
+    },
 ];
