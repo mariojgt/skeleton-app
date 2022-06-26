@@ -1,11 +1,23 @@
 import axios from "axios";
 // Import the quasar framework notifier
 import { Notify } from 'quasar';
+// Import the storage
+import * as storage from "../boot/storage";
 
 const api = axios.create({});
 
 // Add XMLHttpRequest to axios
 api.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+// Add the bearer token to the header
+api.interceptors.request.use(
+    function (config) {
+        // Get the token from local storage
+        const token = storage.getAuthToken();
+        // Add the token to the header
+        config.headers.Authorization = `Bearer ${token}`;
+        return config;
+    }
+);
 
 // Add a response interceptor
 api.interceptors.response.use(
@@ -15,10 +27,10 @@ api.interceptors.response.use(
     function (error) {
         const status = error.response.status;
         if (status === 401) {
-            // Display a notification
+            // Display a notification unauthorized
             Notify.create({
-                message: error.response.data.data,
-                color: 'orange'
+                message: 'Unauthorized',
+                color: 'red'
             });
         } else if (
             status === 402) {
@@ -46,7 +58,6 @@ api.interceptors.response.use(
                 });
             }
         }
-
         return Promise.reject(error);
     }
 );
