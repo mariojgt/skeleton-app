@@ -43,6 +43,30 @@
                 </div>
             </div>
         </div>
+        <q-page-sticky position="bottom-right" :offset="[18, 18]">
+            <q-fab vertical-actions-align="right" color="primary" glossy icon="keyboard_arrow_up" direction="up">
+                <q-fab-action label-position="left" color="primary" @click="createNew = true" icon="mail"
+                    label="Create new" />
+            </q-fab>
+        </q-page-sticky>
+
+        <q-dialog v-model="createNew">
+            <q-card>
+                <q-card-section>
+                    <div class="text-h6">Create new</div>
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                    <q-input filled v-model="name" label="Name" />
+                    <q-toggle label="Is Enable" v-model="isActive" />
+
+                </q-card-section>
+
+                <q-card-actions align="right">
+                    <q-btn flat label="OK" color="primary" @click="createInformation" v-close-popup />
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
     </q-page>
 </template>
 
@@ -100,4 +124,24 @@ const updateInformation = async () => {
         });
 };
 
+// Create new modal
+let createNew = $ref(false);
+
+let name = $ref('');
+let isActive = $ref(true);
+
+const createInformation = async () => {
+    await axios.post(url('tills/create'), {
+        name: name,
+        is_active: isActive,
+        section: filter
+    })
+        .then(function (response) {
+            Notify.create({
+                message: 'Till updated',
+                color: 'green'
+            });
+        });
+    loadInformation();
+};
 </script>
