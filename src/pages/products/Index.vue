@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col">
                     <q-card class="my-card q-pa-md" flat bordered>
-                        <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+                        <q-form @submit="submitProduct" @reset="onReset" class="q-gutter-md">
                             <q-file filled bottom-slots v-model="files" label="Product Images" multiple color="orange">
                                 <template v-slot:append>
                                     <q-icon v-if="files !== null" name="close" @click.stop="files = null"
@@ -13,8 +13,12 @@
                                 </template>
                             </q-file>
 
-                            <q-input label="Name" color="orange" />
-                            <q-input label="Sku Code" color="orange" />
+                            <q-input label="Name" v-model="name" color="orange" />
+                            <div class="text-h4">
+                                Description
+                                <q-editor v-model="description" min-height="5rem" toolbar-color="orange" />
+                            </div>
+                            <q-input label="Sku Code" v-model="skuCode" color="orange" />
 
                             <q-toggle v-model="useStock" label="Use Stock" color="orange" />
                             <q-input label="Stock Quantity" v-if="useStock" v-model="stockQty" color="orange" />
@@ -67,12 +71,15 @@ const router = useRouter();
 let allergiesOptions = ['milk', 'eggs', 'nuts', 'fish', 'soy', 'gluten', 'peanuts', 'sesame', 'wheat', 'shellfish'];
 // Category Options
 let categoryOptions = $ref([]);
-const loadInformation = async () => {
+const loadCategory = async () => {
     await axios.post(url('category'))
         .then(function (response) {
             categoryOptions = [];
             for (const [key, value] of Object.entries(response.data.data)) {
-                categoryOptions.push(value.name);
+                categoryOptions.push({
+                    label: value.name,
+                    value: key
+                });
             }
             Notify.create({
                 message: 'Category loaded',
@@ -80,8 +87,13 @@ const loadInformation = async () => {
             });
         });
 };
-loadInformation();
-// Create Form
+loadCategory();
+
+// Product Information
+let files = $ref(null);
+let name = $ref('');
+let description = $ref(null);
+let skuCode = $ref(null);
 let useStock = $ref(true);
 let isActive = $ref(true);
 let stockQty = $ref(1);
@@ -89,5 +101,43 @@ let allergies = $ref(null);
 let price = $ref(null);
 let costPrice = $ref(null);
 let category = $ref(null);
+
+const submitProduct = async () => {
+
+    let formData = new FormData();
+    // Append the files to formData
+    if (files) {
+        for (const [key, file] of Object.entries(files)) {
+            formData.append('files[]', file);
+        }
+    }
+    // Append the normal data to formData
+    formData.append('name', name);
+    formData.append('description', description);
+    formData.append('sku_code', skuCode);
+    formData.append('use_stock', useStock);
+    formData.append('is_active', isActive);
+    formData.append('stock', stockQty);
+    formData.append('allergies', JSON.stringify(allergies));
+    formData.append('price', price);
+    formData.append('cost_price', costPrice);
+    // Append the category to formData
+    if (category) {
+        formData.append('category_id', category.value);
+    }
+
+    // Upload with headers
+    await axios.post(url('product/create'), formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+        .then(function (response) {
+            Notify.create({
+                message: 'Product successfully created',
+                color: 'green'
+            });
+        });
+};
 
 </script>

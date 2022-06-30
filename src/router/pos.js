@@ -37,7 +37,7 @@ export default [
         path: "/product",
         component: () => import("layouts/MainLayout.vue"),
         children: [
-            { path: "index", component: () => import("src/pages/products/Index.vue") },
+            { path: "create", component: () => import("src/pages/products/Index.vue") },
         ],
         beforeEnter: [auth.checkAuth]
     },
