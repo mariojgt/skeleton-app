@@ -4,41 +4,38 @@
             <div class="row">
                 <div class="col">
                     <q-card class="my-card q-pa-md" flat bordered>
-                        <q-form @submit="submitProduct" @reset="onReset" class="q-gutter-md">
-                            <q-file filled bottom-slots v-model="files" label="Product Images" multiple color="orange">
-                                <template v-slot:append>
-                                    <q-icon v-if="files !== null" name="close" @click.stop="files = null"
-                                        class="cursor-pointer" />
-                                    <q-icon name="create_new_folder" @click.stop />
-                                </template>
-                            </q-file>
-
-                            <q-input label="Name" v-model="name" color="orange" />
-                            <div class="text-h4">
-                                Description
-                                <q-editor v-model="description" min-height="5rem" toolbar-color="orange" />
-                            </div>
-                            <q-input label="Sku Code" v-model="skuCode" color="orange" />
-
-                            <q-toggle v-model="useStock" label="Use Stock" color="orange" />
-                            <q-input label="Stock Quantity" v-if="useStock" v-model="stockQty" color="orange" />
-
-                            <q-select filled v-model="allergies" multiple :options="allergiesOptions" use-chips
-                                stack-label label="Allergies" color="orange" />
-
-                            <q-toggle v-model="isActive" label="Is Active" color="orange" />
-
-                            <q-input v-model="price" type="number" step="0.01" label="Price" color="orange" />
-                            <q-input v-model="costPrice" type="number" step="0.01" label="Cost Price" color="orange" />
-
-                            <q-select filled v-model="category" :options="categoryOptions" use-chips stack-label
-                                label="Category" color="orange" />
-
-                            <q-card-actions align="right">
-                                <q-btn label="Submit" type="submit" color="orange" />
-                                <q-btn label="Reset" type="reset" color="orange" flat class="q-ml-sm" />
-                            </q-card-actions>
-                        </q-form>
+                        <q-markup-table flat bordered>
+                            <thead>
+                                <tr>
+                                    <th colspan="5">
+                                        <div class="row no-wrap items-center">
+                                            <q-icon :name="mdiCashRegister" color="orange" size="70px" />
+                                            <div class="text-h4 q-ml-md text-white">Product</div>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="text-left">Name</th>
+                                    <th class="text-right">Section</th>
+                                    <th class="text-right">Is Active</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, index) in tills" :key="index">
+                                    <td class="text-left">
+                                        <q-input filled v-model="tills[index].name" label="Till Name"
+                                            @blur="updateInformation(index)" />
+                                    </td>
+                                    <td class="text-right">
+                                        {{ item.section }}
+                                    </td>
+                                    <td class="text-right">
+                                        <q-toggle v-model="tills[index].is_active" label="Is Enable"
+                                            @click="updateInformation(index)" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </q-markup-table>
                     </q-card>
                 </div>
             </div>
@@ -67,8 +64,6 @@ let userInfo = $ref(storage.getUserInfo());
 const route = useRoute();
 const router = useRouter();
 
-// Options
-let allergiesOptions = ['milk', 'eggs', 'nuts', 'fish', 'soy', 'gluten', 'peanuts', 'sesame', 'wheat', 'shellfish'];
 // Category Options
 let categoryOptions = $ref([]);
 const loadCategory = async () => {
@@ -78,7 +73,7 @@ const loadCategory = async () => {
             for (const [key, value] of Object.entries(response.data.data)) {
                 categoryOptions.push({
                     label: value.name,
-                    value: key
+                    value: value.id
                 });
             }
             Notify.create({
@@ -88,56 +83,5 @@ const loadCategory = async () => {
         });
 };
 loadCategory();
-
-// Product Information
-let files = $ref(null);
-let name = $ref('');
-let description = $ref(null);
-let skuCode = $ref(null);
-let useStock = $ref(true);
-let isActive = $ref(true);
-let stockQty = $ref(1);
-let allergies = $ref(null);
-let price = $ref(null);
-let costPrice = $ref(null);
-let category = $ref(null);
-
-const submitProduct = async () => {
-
-    let formData = new FormData();
-    // Append the files to formData
-    if (files) {
-        for (const [key, file] of Object.entries(files)) {
-            formData.append('files[]', file);
-        }
-    }
-    // Append the normal data to formData
-    formData.append('name', name);
-    formData.append('description', description);
-    formData.append('sku_code', skuCode);
-    formData.append('use_stock', useStock);
-    formData.append('is_active', isActive);
-    formData.append('stock', stockQty);
-    formData.append('allergies', JSON.stringify(allergies));
-    formData.append('price', price);
-    formData.append('cost_price', costPrice);
-    // Append the category to formData
-    if (category) {
-        formData.append('category_id', category.value);
-    }
-
-    // Upload with headers
-    await axios.post(url('product/create'), formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
-        .then(function (response) {
-            Notify.create({
-                message: 'Product successfully created',
-                color: 'green'
-            });
-        });
-};
 
 </script>
