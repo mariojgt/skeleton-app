@@ -15,23 +15,47 @@
                                     </th>
                                 </tr>
                                 <tr>
+                                    <th class="text-left">Image</th>
                                     <th class="text-left">Name</th>
-                                    <th class="text-right">Section</th>
-                                    <th class="text-right">Is Active</th>
+                                    <th class="text-left">Sku Code</th>
+                                    <th class="text-left">Category</th>
+                                    <th class="text-right">Price</th>
+                                    <th class="text-right">Allergies</th>
+                                    <th class="text-right">Use Stock</th>
+                                    <th class="text-right">Stock</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(item, index) in tills" :key="index">
+                                <tr v-for="(item, index) in product" :key="index">
                                     <td class="text-left">
-                                        <q-input filled v-model="tills[index].name" label="Till Name"
-                                            @blur="updateInformation(index)" />
+                                        <q-avatar square>
+                                            <img :src="item.main_image.url.default">
+                                        </q-avatar>
+                                    </td>
+                                    <td class="text-left">
+                                        {{ item.name }}
+                                    </td>
+                                    <td class="text-left">
+                                        {{ item.sku_code }}
+                                    </td>
+                                    <td class="text-left">
+                                        {{ item.category.name }}
                                     </td>
                                     <td class="text-right">
-                                        {{ item.section }}
+                                        {{ item.formatted_price }}
                                     </td>
                                     <td class="text-right">
-                                        <q-toggle v-model="tills[index].is_active" label="Is Enable"
-                                            @click="updateInformation(index)" />
+                                        <div class="q-pa-md q-gutter-md">
+                                            <q-badge v-for="(allergie, key) in item.allergies" :key="key" color="blue">
+                                                {{ allergie }}
+                                            </q-badge>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">
+                                        {{ item.use_stock }}
+                                    </td>
+                                    <td class="text-right">
+                                        {{ item.stock }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -64,24 +88,19 @@ let userInfo = $ref(storage.getUserInfo());
 const route = useRoute();
 const router = useRouter();
 
-// Category Options
-let categoryOptions = $ref([]);
-const loadCategory = async () => {
-    await axios.post(url('category'))
+// Product Options
+let product = $ref([]);
+const loadProducts = async () => {
+    await axios.post(url('product'))
         .then(function (response) {
-            categoryOptions = [];
-            for (const [key, value] of Object.entries(response.data.data)) {
-                categoryOptions.push({
-                    label: value.name,
-                    value: value.id
-                });
-            }
+            product = [];
+            product = response.data.data;
             Notify.create({
-                message: 'Category loaded',
+                message: 'Product loaded',
                 color: 'green'
             });
         });
 };
-loadCategory();
+loadProducts();
 
 </script>

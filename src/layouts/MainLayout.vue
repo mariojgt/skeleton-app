@@ -74,10 +74,10 @@ const linksList = [
         link: "/till/index",
     },
     {
-        title: "Github",
-        caption: "github.com/quasarframework",
+        title: "Product",
+        caption: "product",
         icon: "code",
-        link: "https://github.com/quasarframework",
+        link: "/product/index",
     },
     {
         title: "Discord Chat Channel",
