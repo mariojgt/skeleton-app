@@ -51,7 +51,7 @@ export default [
         path: "/category",
         component: () => import("layouts/MainLayout.vue"),
         children: [
-            { path: "index", component: () => import("src/pages/category/Index.vue") },
+            { path: "index", component: () => import("src/pages/category/Create.vue") },
         ],
         beforeEnter: [auth.checkAuth]
     },
@@ -69,7 +69,8 @@ export default [
         path: "/order",
         component: () => import("layouts/MainLayout.vue"),
         children: [
-            { path: "", component: () => import("src/pages/orderMode/Index.vue") },
+            { path: "index", component: () => import("src/pages/orderMode/Index.vue") },
+            { path: "create", component: () => import("src/pages/orderMode/Create.vue") },
         ],
         beforeEnter: [auth.checkAuth]
     },

@@ -1,85 +1,76 @@
 <template>
     <q-page>
         <div class="q-pa-md">
-            <div class="row">
-                <div class="col-md-12">
-                    <p>Order</p>
-                </div>
-                <!-- Completed Mode -->
-                <div class="col-md-6 q-pa-sm">
-                    <q-card class="my-card">
-                        <q-card-section>
-                            <div class="row no-wrap items-center">
-                                <div class="col text-h6 ellipsis">
-                                    My Orders
-                                </div>
+            <q-list bordered padding>
+                <q-item clickable v-ripple>
+                    <q-item-section>
+                        <q-item-label>Search</q-item-label>
+                        <q-item-label caption>
+                            <q-input v-model="text" label="Product Search" />
+                        </q-item-label>
+                    </q-item-section>
+                </q-item>
+                <q-item-label header>Categories</q-item-label>
+                <q-item clickable v-ripple class="bg-green text-white">
+                    <q-item-section>
+                        <q-item-label>Password</q-item-label>
+                        <q-item-label caption>
+                            10 product
+                        </q-item-label>
+                    </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple class="bg-green text-white">
+                    <q-item-section>
+                        <q-item-label>Password</q-item-label>
+                        <q-item-label caption>
+                            10 product
+                        </q-item-label>
+                    </q-item-section>
+                </q-item>
+                <q-separator spaced />
+                <q-item-label header>Product</q-item-label>
+                <q-separator spaced />
+
+                <q-item>
+                    <q-item-section avatar top>
+                        <q-avatar color="primary" text-color="white">
+                            m
+                        </q-avatar>
+                    </q-item-section>
+
+                    <q-item-section top class="col-6">
+                        <q-item-label class="q-mt-sm">Product Name</q-item-label>
+                        <q-item-label class="q-mt-sm">
+                            extra guacamode souce, extra guacamode souce, extra guacamode souce, extra guacamode souce,
+                            extra guacamode souce, extra guacamode souce, extra guacamode souce, extra guacamode souce,
+                        </q-item-label>
+                    </q-item-section>
+
+                    <q-item-section top class="col-3">
+                        <q-item-label caption lines="1">
+                            <q-item-label class="q-mt-sm">Allergies</q-item-label>
+                            <div class="q-pa-md q-gutter-md">
+                                <q-badge color="blue" label="here" />
+                                <q-badge color="blue" label="here" />
                             </div>
-                        </q-card-section>
-                        <q-separator />
-
-                    </q-card>
-                </div>
-                <!-- Bar Mode -->
-                <div class="col-md-6 q-pa-sm">
-                    <q-card class="my-card">
-                        <q-card-section>
-                            <div class="row no-wrap items-center">
-                                <div class="col text-h6 ellipsis">
-                                    Orders
-                                </div>
+                        </q-item-label>
+                        <q-item-label lines="2">
+                            <div class="q-pa-md q-gutter-md">
+                                <q-btn color="white" text-color="black" label="qty:1" />
+                                <q-btn color="white" text-color="black" label="Modification" />
                             </div>
-                        </q-card-section>
-                        <q-separator />
+                        </q-item-label>
+                    </q-item-section>
 
-                        <q-list bordered>
-                            <q-item clickable>
-
-                                <q-item-section>
-                                    <q-expansion-item>
-                                        <template v-slot:header>
-                                            <q-item-section>
-                                                <q-item-label>#1234</q-item-label>
-                                                <q-item-label caption lines="1">£25.50</q-item-label>
-                                            </q-item-section>
-
-                                            <q-item-section side>
-
-                                            </q-item-section>
-                                        </template>
-
-                                        <q-card>
-                                            <q-card-section>
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem,
-                                                eius
-                                                reprehenderit eos corrupti
-                                                commodi magni quaerat ex numquam, dolorum officiis modi facere
-                                                maiores
-                                                architecto suscipit iste
-                                                eveniet doloribus ullam aliquid.
-                                            </q-card-section>
-                                        </q-card>
-                                    </q-expansion-item>
-                                </q-item-section>
-
-                                <q-item-section side>
-                                    <q-btn round color="green" icon="navigation" />
-                                </q-item-section>
-                            </q-item>
-                        </q-list>
-                    </q-card>
-                </div>
-            </div>
+                    <q-item-section top side class="col">
+                        <div class="text-grey-8 q-gutter-xs">
+                            <q-btn size="12px" color="blue" dense round icon="add" />
+                        </div>
+                    </q-item-section>
+                </q-item>
+            </q-list>
         </div>
-
-        <q-page-sticky position="bottom-right" :offset="[18, 18]">
-            <q-fab v-model="fabRight" vertical-actions-align="right" color="primary" glossy icon="keyboard_arrow_up"
-                direction="up">
-                <q-fab-action label-position="left" color="primary" @click="onClick" icon="mail" label="New Order" />
-            </q-fab>
-        </q-page-sticky>
-
     </q-page>
-
 </template>
 
 <script setup>

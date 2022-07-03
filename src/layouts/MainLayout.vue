@@ -80,10 +80,10 @@ const linksList = [
         link: "/product/index",
     },
     {
-        title: "Discord Chat Channel",
-        caption: "chat.quasar.dev",
-        icon: "chat",
-        link: "https://chat.quasar.dev",
+        title: "Order",
+        caption: "Orders",
+        icon: "recipe",
+        link: "/order/index",
     },
     {
         title: "Forum",

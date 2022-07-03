@@ -21,11 +21,7 @@
                                         transition-next="jump-up">
                                         <q-tab-panel name="required">
                                             <q-input label="Name" v-model="name" color="orange" />
-                                            <div class="text-h4">
-                                                Description
-                                                <q-editor v-model="description" min-height="5rem"
-                                                    toolbar-color="orange" />
-                                            </div>
+                                            <q-input label="Description" v-model="description" color="orange" />
                                             <q-input label="Sku Code" v-model="skuCode" color="orange" />
                                             <q-file filled bottom-slots v-model="files" label="Product Images" multiple
                                                 color="orange">
@@ -36,29 +32,38 @@
                                                 </template>
                                             </q-file>
 
-                                            <div class="row">
-                                                <div class="col-3 q-pa-md" v-for="(item, index) in productImages"
-                                                    :key="index">
-                                                    <q-card class="my-card">
-                                                        <img :src="item.url.medium">
+                                            <q-list bordered>
+                                                <q-item-label header>Product Images</q-item-label>
 
-                                                        <q-card-section>
-                                                            <div class="text-h6">{{ item.name }}</div>
-                                                        </q-card-section>
+                                                <q-item class="q-my-sm" clickable v-ripple
+                                                    v-for="(item, index) in productImages" :key="index">
+                                                    <q-item-section avatar>
+                                                        <q-avatar color="primary" text-color="white">
+                                                            <img :src="item.url.medium">
+                                                        </q-avatar>
+                                                    </q-item-section>
 
-                                                        <q-card-section class="q-pt-none q-gutter-md">
-                                                            <q-btn color="orange" v-if="item.id == productMainImage.id">
-                                                                Main Image</q-btn>
-                                                            <q-btn color="green"
-                                                                @click="updateProductMainImage(item.id)" v-else>
-                                                                Select</q-btn>
-                                                            <q-btn color="red" @click="productImages.splice(index, 1)">
-                                                                Remove
-                                                            </q-btn>
-                                                        </q-card-section>
-                                                    </q-card>
-                                                </div>
-                                            </div>
+                                                    <q-item-section>
+                                                        <q-item-label>
+                                                            {{ item.name }}
+                                                        </q-item-label>
+                                                    </q-item-section>
+
+                                                    <q-item-section top side>
+                                                        <div class="text-grey-8 q-gutter-md">
+                                                            <q-btn size="12px" color="red" dense round icon="delete"
+                                                                @click="productImages.splice(index, 1)" />
+                                                            <q-btn v-if="item.id == productMainImage.id" size="12px"
+                                                                flat dense round color="orange" label="Main Image" />
+                                                            <q-btn v-else size="12px" flat dense round color="green"
+                                                                @click="updateProductMainImage(item.id)"
+                                                                label="Select" />
+                                                        </div>
+                                                    </q-item-section>
+                                                </q-item>
+
+                                                <q-separator />
+                                            </q-list>
 
                                         </q-tab-panel>
 
