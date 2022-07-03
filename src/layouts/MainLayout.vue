@@ -63,6 +63,7 @@
 import * as storage from "../boot/storage";
 // User basic info
 let userInfo = storage.getUserInfo();
+
 import { mdiCashRegister } from '@mdi/js';
 import { defineComponent, ref } from "vue";
 import EssentialLink from "components/EssentialLink";
