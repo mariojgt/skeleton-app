@@ -1,9 +1,9 @@
 <template>
     <q-page>
-        <div class="q-pa-md">
+        <div class="q-pa-lg">
             <div class="row">
                 <div class="col">
-                    <q-card class="my-card q-pa-md" flat bordered>
+                    <q-card class="my-card q-pa-lg" flat bordered>
                         <q-markup-table flat bordered>
                             <thead>
                                 <tr>
@@ -12,6 +12,14 @@
                                             <q-icon :name="mdiCashRegister" color="orange" size="70px" />
                                             <div class="text-h4 q-ml-md text-white">Product</div>
                                         </div>
+                                    </th>
+                                    <th>
+                                        <q-select v-model="pagination" :options="[5, 10, 25, 50, 100]"
+                                            label="Pagination" />
+                                    </th>
+                                    <th>
+                                        <q-input v-model="search" debounce="500" filled placeholder="Search"
+                                            label="Search" color="orange" />
                                     </th>
                                 </tr>
                                 <tr>
@@ -23,6 +31,7 @@
                                     <th class="text-right">Allergies</th>
                                     <th class="text-right">Use Stock</th>
                                     <th class="text-right">Stock</th>
+                                    <th class="text-right"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,6 +66,15 @@
                                     <td class="text-right">
                                         {{ item.stock }}
                                     </td>
+                                    <td class="text-right">
+                                        <q-btn color="orange" text-color="black" label="Edit" :to="
+                                        {
+                                            name: 'product-edit',
+                                            query: {
+                                                product: item.id
+                                            }
+                                        }" />
+                                    </td>
                                 </tr>
                             </tbody>
                         </q-markup-table>
@@ -64,6 +82,13 @@
                 </div>
             </div>
         </div>
+        <q-page-sticky position="bottom-right" :offset="[18, 18]">
+            <q-fab v-model="fabRight" vertical-actions-align="right" color="primary" glossy icon="keyboard_arrow_up"
+                direction="up">
+                <q-fab-action label-position="left" color="primary" :to="{ name: 'product-create', }" icon="mail"
+                    label="New Product" />
+            </q-fab>
+        </q-page-sticky>
     </q-page>
 </template>
 
@@ -88,10 +113,34 @@ let userInfo = $ref(storage.getUserInfo());
 const route = useRoute();
 const router = useRouter();
 
+let search = $ref('');
+let pagination = $ref(10);
+
+// Watch pagination
+watch(
+    () => pagination,
+    (v) => {
+        // Search the products in here
+        loadProducts();
+    }
+);
+
+// Watch the search
+watch(
+    () => search,
+    (v) => {
+        // Search the products in here
+        loadProducts();
+    }
+);
+
 // Product Options
 let product = $ref([]);
 const loadProducts = async () => {
-    await axios.post(url('product'))
+    await axios.post(url('product'), {
+        search: search,
+        pagination: pagination
+    })
         .then(function (response) {
             product = [];
             product = response.data.data;

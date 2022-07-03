@@ -38,7 +38,12 @@ export default [
         component: () => import("layouts/MainLayout.vue"),
         children: [
             { path: "index", component: () => import("src/pages/products/Index.vue") },
-            { path: "create", component: () => import("src/pages/products/Create.vue") },
+            { name: "product-create", path: "create", component: () => import("src/pages/products/Create.vue") },
+            {
+                name: "product-edit",
+                path: "edit", component: () => import("src/pages/products/Edit.vue"),
+                parameters: { product: String },
+            },
         ],
         beforeEnter: [auth.checkAuth]
     },
