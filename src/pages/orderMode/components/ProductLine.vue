@@ -9,17 +9,19 @@
                 </q-avatar>
             </q-item-section>
             <q-item-section>
-                <q-item-label class="q-pa-md">Product Name</q-item-label>
+                <q-item-label class="q-pa-md">Product Name x {{ qty }}</q-item-label>
 
                 <!-- Modifications -->
-                <q-expansion-item expand-separator icon="perm_identity" label="Modifications">
+                <q-expansion-item v-if="modification[0]" expand-separator :icon="mdiCircleEditOutline"
+                    label="Modifications">
                     <q-card>
                         <q-card-section>
                             <q-list>
                                 <q-item clickable v-ripple v-for="(item, index) in modification" :key="index">
-                                    <q-item-section>
-                                        {{ item }}
+                                    <q-item-section avatar>
+                                        <q-icon color="orange" :name="mdiMenuRightOutline" />
                                     </q-item-section>
+                                    <q-item-section>{{ item }}</q-item-section>
                                 </q-item>
                             </q-list>
                         </q-card-section>
@@ -27,19 +29,12 @@
                 </q-expansion-item>
 
                 <!-- Extras -->
-                <q-expansion-item expand-separator icon="perm_identity" label="Extras">
+                <q-expansion-item v-if="extras[0]" expand-separator :icon="mdiClipboardListOutline" label="Extras">
                     <q-card>
                         <q-card-section>
                             <q-list>
-                                <q-item clickable v-ripple>
-                                    <q-item-section>
-                                        Extra souce x 4.00
-                                    </q-item-section>
-                                </q-item>
-
-                                <q-item clickable v-ripple>
-                                    <q-item-section>
-                                        Extra rice x 4.00
+                                <q-item v-for="(item, index) in extras" :key="index">
+                                    <q-item-section>{{ item.name }} - {{ item.formatted_price_currency }}
                                     </q-item-section>
                                 </q-item>
                             </q-list>
@@ -47,23 +42,27 @@
                     </q-card>
                 </q-expansion-item>
 
+                <!-- Allergies -->
+                <q-expansion-item expand-separator :icon="mdiPeanut" label="Allergies">
+                    <q-card>
+                        <q-card-section>
+                            <div class="q-pa-md q-gutter-md">
+                                <q-badge color="red" label="here" />
+                                <q-badge color="red" label="here" />
+                            </div>
+                        </q-card-section>
+                    </q-card>
+                </q-expansion-item>
+
                 <q-item-label>
                     <div class="q-pa-md q-gutter-md">
                         <q-btn color="green" text-color="white" :label="'qty:' + qty" @click="dialogQty = true" />
-                        <q-btn color="purple" text-color="white" label="Modification"
+                        <q-btn color="orange" text-color="white" label="Modification"
                             @click="dialogModification = true" />
                         <q-btn color="indigo" text-color="white" label="Extras" @click="dialogExtras = true" />
                         <q-chip size="md" color="green">
-                            £1.00
+                            £{{ finalPrice }}
                         </q-chip>
-                    </div>
-                </q-item-label>
-
-                <q-item-label caption>Allergies</q-item-label>
-                <q-item-label>
-                    <div class="q-pa-md q-gutter-md">
-                        <q-badge color="red" label="here" />
-                        <q-badge color="red" label="here" />
                     </div>
                 </q-item-label>
 
@@ -126,20 +125,26 @@
 
             <div class="q-pa-md" style="max-width: 350px">
                 <q-list bordered separator>
-                    <q-item>
-                        <q-item-section>Icon as avatar</q-item-section>
+                    <q-item v-for="(item, index) in extras" :key="index">
+                        <q-item-section>{{ item.name }} - {{ item.formatted_price_currency }}</q-item-section>
                         <q-item-section avatar>
-                            <q-btn round color="red" icon="remove" />
+                            <q-btn round color="red" icon="remove" @click="removeExtras(index)" />
                         </q-item-section>
                     </q-item>
 
-                    <!-- add modification -->
+                    <!-- Add extras -->
                     <q-item>
                         <q-item-section>
-                            <q-input v-model="text" label="Modification" />
+                            <q-input v-model="extraSearch" debounce="500" filled color="orange" label="Extras" />
+                        </q-item-section>
+                    </q-item>
+                    <!-- Product options -->
+                    <q-item v-for="(item, index) in extraOptions" :key="index">
+                        <q-item-section>
+                            {{ item.name }} - {{ item.formatted_price_currency }}
                         </q-item-section>
                         <q-item-section avatar>
-                            <q-btn round color="green" icon="add" />
+                            <q-btn round color="green" icon="add" @click="addExtras(index)" />
                         </q-item-section>
                     </q-item>
                 </q-list>
@@ -150,9 +155,15 @@
 </template>
 
 <script setup>
-import { defineComponent } from "vue";
-import { mdiTrashCan } from '@mdi/js';
-
+import { watch } from "vue";
+import { mdiClipboardListOutline, mdiPeanut, mdiCircleEditOutline, mdiMenuRightOutline } from '@mdi/js';
+// import the endpoint
+import { url } from "../../../boot/endpoint";
+// Import the axios
+import { api } from "../../../boot/axiosAuth";
+const axios = api;
+// Import the quasar framework notifier
+import { Notify } from 'quasar';
 
 // Dialogs
 let dialogQty = $ref(false);
@@ -170,7 +181,7 @@ const addModification = async () => {
     }
 };
 
-// qty dialog
+// Qty dialog
 let qty = $ref(1);
 let maxStock = $ref(10);
 
@@ -185,6 +196,67 @@ const decreaseQty = async () => {
         qty--;
     }
 };
+
+// Extra dialog
+let extraOptions = $ref([]);
+let extraSearch = $ref('');
+// watch the search
+watch(
+    () => extraSearch,
+    (v) => {
+        loadSearchExtras();
+    }
+);
+// load the search results
+const loadSearchExtras = async () => {
+    await axios.post(url('product/extras'), {
+        search: extraSearch
+    })
+        .then(function (response) {
+            extraOptions = response.data.data;
+
+            Notify.create({
+                message: 'Extras loaded',
+                color: 'green'
+            });
+        });
+};
+loadSearchExtras();
+let extras = $ref([]);
+
+const addExtras = async (key) => {
+    extras.push(extraOptions[key]);
+    calculateProductPrice();
+};
+
+const removeExtras = async (key) => {
+    extras.splice(key, 1);
+    calculateProductPrice();
+};
+
+// Product price calculation
+
+// Watch the qty change
+watch(
+    () => qty,
+    (v) => {
+        calculateProductPrice();
+    }
+);
+
+// Product item final price
+let finalPrice = $ref(0);
+const calculateProductPrice = async () => {
+    // Calculate the price
+    let extraPrices = 0;
+    extras.forEach(function (item) {
+        extraPrices += item.formatted_price;
+    });
+    // Update this later to use the price from the product
+    let productPrice = 2;
+    finalPrice = (productPrice + extraPrices) * qty;
+};
+calculateProductPrice();
 
 </script>
 
