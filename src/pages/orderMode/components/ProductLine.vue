@@ -7,64 +7,68 @@
                 <q-img :src="product?.main_image?.url?.default" spinner-color="white" />
             </q-item-section>
             <q-item-section>
-                <q-item-label class="q-pa-md">{{ product.name }} x {{ qty }}</q-item-label>
-                <!-- Modifications -->
-                <q-expansion-item v-if="modification[0]" expand-separator :icon="mdiCircleEditOutline"
-                    label="Modifications">
+                <q-expansion-item expand-separator :label="product.name + ' x ' + qty + ' £' + finalPrice">
                     <q-card>
-                        <q-card-section>
-                            <q-list>
-                                <q-item clickable v-ripple v-for="(item, index) in modification" :key="index">
-                                    <q-item-section avatar>
-                                        <q-icon color="orange" :name="mdiMenuRightOutline" />
-                                    </q-item-section>
-                                    <q-item-section>{{ item }}</q-item-section>
-                                </q-item>
-                            </q-list>
-                        </q-card-section>
-                    </q-card>
-                </q-expansion-item>
+                        <!-- Modifications -->
+                        <q-expansion-item v-if="modification[0]" expand-separator :icon="mdiCircleEditOutline"
+                            label="Modifications">
+                            <q-card>
+                                <q-card-section>
+                                    <q-list>
+                                        <q-item clickable v-ripple v-for="(item, index) in modification" :key="index">
+                                            <q-item-section avatar>
+                                                <q-icon color="orange" :name="mdiMenuRightOutline" />
+                                            </q-item-section>
+                                            <q-item-section>{{ item }}</q-item-section>
+                                        </q-item>
+                                    </q-list>
+                                </q-card-section>
+                            </q-card>
+                        </q-expansion-item>
 
-                <!-- Extras -->
-                <q-expansion-item v-if="extras[0]" expand-separator :icon="mdiClipboardListOutline" label="Extras">
-                    <q-card>
-                        <q-card-section>
-                            <q-list>
-                                <q-item v-for="(item, index) in extras" :key="index">
-                                    <q-item-section>{{ item.name }} - {{ item.formatted_price_currency }}
-                                    </q-item-section>
-                                </q-item>
-                            </q-list>
-                        </q-card-section>
-                    </q-card>
-                </q-expansion-item>
+                        <!-- Extras -->
+                        <q-expansion-item v-if="extras[0]" expand-separator :icon="mdiClipboardListOutline"
+                            label="Extras">
+                            <q-card>
+                                <q-card-section>
+                                    <q-list>
+                                        <q-item v-for="(item, index) in extras" :key="index">
+                                            <q-item-section>{{ item.name }} - {{ item.formatted_price_currency }}
+                                            </q-item-section>
+                                        </q-item>
+                                    </q-list>
+                                </q-card-section>
+                            </q-card>
+                        </q-expansion-item>
 
-                <!-- Allergies -->
-                <q-expansion-item expand-separator :icon="mdiPeanut" label="Allergies">
-                    <q-card>
-                        <q-card-section>
+                        <!-- Allergies -->
+                        <q-expansion-item expand-separator :icon="mdiPeanut" label="Allergies">
+                            <q-card>
+                                <q-card-section>
+                                    <div class="q-pa-md q-gutter-md">
+                                        <q-badge color="red" v-for="(item, index) in allergies" :key="index"
+                                            :label="item" />
+                                    </div>
+                                </q-card-section>
+                            </q-card>
+                        </q-expansion-item>
+
+                        <q-item-label>
                             <div class="q-pa-md q-gutter-md">
-                                <q-badge color="red" label="here" />
-                                <q-badge color="red" label="here" />
+                                <q-btn v-if="props.qtyEdit" color="green" text-color="white" :label="'qty:' + qty"
+                                    @click="dialogQty = true" />
+                                <q-btn color="orange" text-color="white" label="Modification"
+                                    @click="dialogModification = true" />
+                                <q-btn color="indigo" text-color="white" label="Extras" @click="dialogExtras = true" />
+                                <q-chip size="md" color="green">
+                                    £{{ finalPrice }}
+                                </q-chip>
                             </div>
-                        </q-card-section>
+                        </q-item-label>
                     </q-card>
                 </q-expansion-item>
 
-                <q-item-label>
-                    <div class="q-pa-md q-gutter-md">
-                        <q-btn v-if="props.qtyEdit" color="green" text-color="white" :label="'qty:' + qty"
-                            @click="dialogQty = true" />
-                        <q-btn color="orange" text-color="white" label="Modification"
-                            @click="dialogModification = true" />
-                        <q-btn color="indigo" text-color="white" label="Extras" @click="dialogExtras = true" />
-                        <q-chip size="md" color="green">
-                            £{{ finalPrice }}
-                        </q-chip>
-                    </div>
-                </q-item-label>
-
-                <q-item-label>
+                <q-item-label v-if="product">
                     <!-- button to add to order or remove -->
                     <q-btn color="teal" class="full-width" label="Add to order" v-if="props.newProduct" />
                     <q-btn color="red" class="full-width" label="Remove" @click="removeProduct" v-else />
@@ -155,7 +159,7 @@
 </template>
 
 <script setup>
-import { watch } from "vue";
+import { watch, onMounted } from "vue";
 import { mdiClipboardListOutline, mdiPeanut, mdiCircleEditOutline, mdiMenuRightOutline } from '@mdi/js';
 // import the endpoint
 import { url } from "../../../boot/endpoint";
@@ -188,11 +192,16 @@ watch(
     }
 );
 
-// computed properties of props
+let allergies = $ref([]);
 let product = $ref([]);
-setTimeout(() => {
+
+onMounted(() => {
     product = props.productInfo;
-}, 1000);
+    if (product.allergies) {
+        allergies = JSON.parse(product.allergies);
+    }
+    syncProduct();
+});
 
 // Dialogs
 let dialogQty = $ref(false);
@@ -268,6 +277,15 @@ watch(
     }
 );
 
+// Product sync
+const syncProduct = async () => {
+    product.extras = extras;
+    product.qty = qty;
+    product.modification = modification;
+    product.final_price = finalPrice;
+    emit("productSync", product);
+};
+
 // Product item final price
 let finalPrice = $ref(0);
 const calculateProductPrice = async () => {
@@ -279,12 +297,14 @@ const calculateProductPrice = async () => {
     // Update this later to use the price from the product
     let productPrice = 2;
     finalPrice = ((productPrice + extraPrices) * qty).toFixed(2);
+
+    await syncProduct();
 };
 calculateProductPrice();
 
 
 // Remove action
-const emit = defineEmits(["removeProduct"]);
+const emit = defineEmits(["removeProduct", "productSync"]);
 
 const removeProduct = async () => {
     emit("removeProduct", product.unique_key);

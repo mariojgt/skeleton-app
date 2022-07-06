@@ -15,15 +15,33 @@
                 </q-item>
                 <q-item clickable v-ripple>
                     <q-item-section>
-                        <q-item-label>Table</q-item-label>
+                        <q-item-label>Order / Table name</q-item-label>
                         <q-item-label caption>
                             <q-input v-model="orderName" color="orange" label="Order Name" />
                         </q-item-label>
                     </q-item-section>
                 </q-item>
                 <q-separator spaced />
+                <!-- Product list -->
                 <product-item v-for="(item, index) in products" :key="index" :qtyEdit="false" :productInfo="item"
-                    :newProduct="false" @removeProduct="removeProduct" />
+                    :newProduct="false" @removeProduct="removeProduct" @productSync="syncProduct" />
+                <q-item clickable v-ripple>
+                    <q-item-section>
+                        <q-item-label>Totals</q-item-label>
+                        <q-item clickable v-ripple>
+                            <q-item-section>Tax</q-item-section>
+                            <q-item-section avatar>
+                                £10:00
+                            </q-item-section>
+                        </q-item>
+                        <q-item clickable v-ripple>
+                            <q-item-section>Total</q-item-section>
+                            <q-item-section avatar>
+                                £10:00
+                            </q-item-section>
+                        </q-item>
+                    </q-item-section>
+                </q-item>
             </q-list>
         </div>
     </q-page>
@@ -78,6 +96,10 @@ const removeProduct = (uniqueKey) => {
         }
     }
 };
+
+const syncProduct = (product) => {
+    console.log(product);
+}
 
 </script>
 
