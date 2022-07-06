@@ -4,13 +4,10 @@
         <q-separator spaced />
         <q-item>
             <q-item-section avatar top>
-                <q-avatar color="primary" text-color="white">
-                    m
-                </q-avatar>
+                <q-img :src="product?.main_image?.url?.default" spinner-color="white" />
             </q-item-section>
             <q-item-section>
-                <q-item-label class="q-pa-md">Product Name x {{ qty }}</q-item-label>
-
+                <q-item-label class="q-pa-md">{{ product.name }} x {{ qty }}</q-item-label>
                 <!-- Modifications -->
                 <q-expansion-item v-if="modification[0]" expand-separator :icon="mdiCircleEditOutline"
                     label="Modifications">
@@ -56,7 +53,8 @@
 
                 <q-item-label>
                     <div class="q-pa-md q-gutter-md">
-                        <q-btn color="green" text-color="white" :label="'qty:' + qty" @click="dialogQty = true" />
+                        <q-btn v-if="props.qtyEdit" color="green" text-color="white" :label="'qty:' + qty"
+                            @click="dialogQty = true" />
                         <q-btn color="orange" text-color="white" label="Modification"
                             @click="dialogModification = true" />
                         <q-btn color="indigo" text-color="white" label="Extras" @click="dialogExtras = true" />
@@ -67,7 +65,9 @@
                 </q-item-label>
 
                 <q-item-label>
-                    <q-btn color="teal" class="full-width" label="Add to order" />
+                    <!-- button to add to order or remove -->
+                    <q-btn color="teal" class="full-width" label="Add to order" v-if="props.newProduct" />
+                    <q-btn color="red" class="full-width" label="Remove" @click="removeProduct" v-else />
                 </q-item-label>
 
             </q-item-section>
@@ -165,6 +165,35 @@ const axios = api;
 // Import the quasar framework notifier
 import { Notify } from 'quasar';
 
+// Create a define props with computed properties
+const props = defineProps({
+    productInfo: {
+        type: Object,
+        default: () => ({}),
+    },
+    newProduct: {
+        type: Boolean,
+        default: true,
+    },
+    qtyEdit: {
+        type: Boolean,
+        default: false,
+    }
+});
+
+watch(
+    () => props.productInfo,
+    (v) => {
+        product = props.productInfo;
+    }
+);
+
+// computed properties of props
+let product = $ref([]);
+setTimeout(() => {
+    product = props.productInfo;
+}, 1000);
+
 // Dialogs
 let dialogQty = $ref(false);
 let dialogModification = $ref(false);
@@ -214,11 +243,6 @@ const loadSearchExtras = async () => {
     })
         .then(function (response) {
             extraOptions = response.data.data;
-
-            Notify.create({
-                message: 'Extras loaded',
-                color: 'green'
-            });
         });
 };
 loadSearchExtras();
@@ -254,9 +278,17 @@ const calculateProductPrice = async () => {
     });
     // Update this later to use the price from the product
     let productPrice = 2;
-    finalPrice = (productPrice + extraPrices) * qty;
+    finalPrice = ((productPrice + extraPrices) * qty).toFixed(2);
 };
 calculateProductPrice();
+
+
+// Remove action
+const emit = defineEmits(["removeProduct"]);
+
+const removeProduct = async () => {
+    emit("removeProduct", product.unique_key);
+};
 
 </script>
 
