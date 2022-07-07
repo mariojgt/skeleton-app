@@ -105,7 +105,7 @@
                     <q-item v-for="(item, index) in modification" :key="index">
                         <q-item-section>{{ item }}</q-item-section>
                         <q-item-section avatar>
-                            <q-btn round color="red" icon="remove" @click="modification.splice(index, 1)" />
+                            <q-btn round color="red" icon="remove" @click="removeModification(index)" />
                         </q-item-section>
                     </q-item>
 
@@ -216,7 +216,13 @@ const addModification = async () => {
     if (modificationText) {
         modification.push(modificationText);
         modificationText = null;
+        await syncProduct();
     }
+};
+
+const removeModification = async (index) => {
+    modification.splice(index, 1);
+    await syncProduct();
 };
 
 // Qty dialog

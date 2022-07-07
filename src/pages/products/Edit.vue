@@ -81,6 +81,8 @@
                                                 color="orange" />
                                             <q-input v-model="costPrice" type="number" step="0.01" label="Cost Price"
                                                 color="orange" />
+                                            <q-input v-model="tax" type="number" step="000" label="Tax Percentage"
+                                                color="orange" />
 
                                             <q-select filled v-model="category" :options="categoryOptions" use-chips
                                                 stack-label label="Category" color="orange" />
@@ -151,6 +153,7 @@ const loadProductInfo = async () => {
             allergies = productInfo.allergies;
             price = productInfo.formatted_price;
             costPrice = productInfo.formatted_cost_price;
+            tax = productInfo.tax;
             category = {
                 label: productInfo.category.name,
                 value: productInfo.category.id
@@ -217,6 +220,7 @@ let allergies = $ref(null);
 let price = $ref(null);
 let costPrice = $ref(null);
 let category = $ref(null);
+let tax = $ref(null);
 
 const submitProduct = async () => {
 
@@ -238,6 +242,7 @@ const submitProduct = async () => {
     formData.append('allergies', allergies);
     formData.append('price', price);
     formData.append('cost_price', costPrice);
+    formData.append('tax', tax);
     // Loop all the current medias and append to formData
     if (productImages) {
         for (const [key, value] of Object.entries(productImages)) {

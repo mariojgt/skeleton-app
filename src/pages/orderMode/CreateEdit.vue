@@ -96,9 +96,13 @@ const removeProduct = (uniqueKey) => {
         }
     }
 };
-
+// Sync products
 const syncProduct = (product) => {
-    console.log(product);
+    for (const [key, value] of Object.entries(products)) {
+        if (value.unique_key === product.unique_key) {
+            products[key] = product;
+        }
+    }
 }
 
 </script>
