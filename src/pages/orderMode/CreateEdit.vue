@@ -120,6 +120,7 @@ const removeProduct = (uniqueKey) => {
             products.splice(key, 1);
         }
     }
+    calculateTotals();
 };
 
 // Sync products
@@ -170,6 +171,7 @@ const calculateTotals = () => {
 const orderCreateUpdate = async () => {
 
     let orderRoute = null;
+    // Check if we are on edit mode
     if (newOrder == true) {
         orderRoute = url('order/create');
     } else {
@@ -182,14 +184,16 @@ const orderCreateUpdate = async () => {
         total: total,
         total_tax: totalTax,
         sub_total: subTotal,
+        order_id: orderId,
     })
         .then(function (response) {
             const orderProducts = JSON.parse(response.data.data.raw_line);
-            orderName = response.data.data.order_name;
             products = orderProducts;
-            total = response.data.data.total;
-            totalTax = response.data.data.tax;
-            subTotal = response.data.data.subtotal;
+            orderName = response.data.data.order_name;
+            total = response.data.data.formatted_total;
+            totalTax = response.data.data.formatted_tax;
+            subTotal = response.data.data.formatted_subtotal;
+            // On save we return the order id and we can use it to edit the order
             newOrder = false;
             orderId = response.data.data.id;
         });
