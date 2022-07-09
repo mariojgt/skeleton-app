@@ -70,7 +70,11 @@ export default [
         component: () => import("layouts/MainLayout.vue"),
         children: [
             { path: "index", component: () => import("src/pages/orderMode/Index.vue") },
-            { path: "create-edit", component: () => import("src/pages/orderMode/CreateEdit.vue") },
+            {
+                path: "create-edit",
+                component: () => import("src/pages/orderMode/CreateEdit.vue"),
+                parameters: { order: String },
+            },
         ],
         beforeEnter: [auth.checkAuth]
     },

@@ -60,9 +60,7 @@
                                 <q-btn color="orange" text-color="white" label="Modification"
                                     @click="dialogModification = true" />
                                 <q-btn color="indigo" text-color="white" label="Extras" @click="dialogExtras = true" />
-                                <q-chip size="md" color="green">
-                                    £{{ finalPrice }}
-                                </q-chip>
+                                <q-btn color="green" text-color="white" :label="'£' + finalPrice" />
                             </div>
                         </q-item-label>
                     </q-card>
@@ -122,7 +120,6 @@
             </div>
         </q-card>
     </q-dialog>
-
     <!-- Product Extras -->
     <q-dialog v-model="dialogExtras" position="right">
         <q-card>
@@ -155,7 +152,6 @@
             </div>
         </q-card>
     </q-dialog>
-
 </template>
 
 <script setup>
@@ -192,6 +188,9 @@ watch(
     }
 );
 
+// Define the product events
+const emit = defineEmits(["removeProduct", "productSync"]);
+
 let allergies = $ref([]);
 let product = $ref([]);
 
@@ -207,6 +206,7 @@ onMounted(() => {
 let dialogQty = $ref(false);
 let dialogModification = $ref(false);
 let dialogExtras = $ref(false);
+let dialogProductDiscount = $ref(false);
 
 // Logic for the modification dialog
 let modification = $ref([]);
@@ -308,10 +308,7 @@ const calculateProductPrice = async () => {
 };
 calculateProductPrice();
 
-
 // Remove action
-const emit = defineEmits(["removeProduct", "productSync"]);
-
 const removeProduct = async () => {
     emit("removeProduct", product.unique_key);
 };

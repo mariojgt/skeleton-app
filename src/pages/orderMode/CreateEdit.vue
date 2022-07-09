@@ -21,36 +21,60 @@
                         </q-item-label>
                     </q-item-section>
                 </q-item>
+                <!-- Discount -->
+                <!-- <q-expansion-item expand-separator :icon="mdiCircleEditOutline" label="Discount">
+                    <q-card>
+                        <q-card-section>
+
+                        </q-card-section>
+                    </q-card>
+                </q-expansion-item> -->
                 <q-separator spaced />
                 <!-- Product list -->
                 <product-item v-for="(item, index) in products" :key="index" :qtyEdit="false" :productInfo="item"
                     :newProduct="false" @removeProduct="removeProduct" @productSync="syncProduct" />
-                <q-item clickable v-ripple>
+                <q-item>
                     <q-item-section>
                         <q-item-label>Totals</q-item-label>
-                        <q-item clickable v-ripple>
-                            <q-item-section>Tax</q-item-section>
-                            <q-item-section avatar>
-                                £10:00
-                            </q-item-section>
-                        </q-item>
-                        <q-item clickable v-ripple>
+                        <q-item>
                             <q-item-section>Total</q-item-section>
                             <q-item-section avatar>
-                                £10:00
+                                £{{ total }}
+                            </q-item-section>
+                        </q-item>
+                        <q-item>
+                            <q-item-section>Sub Total</q-item-section>
+                            <q-item-section avatar>
+                                £{{ subTotal }}
+                            </q-item-section>
+                        </q-item>
+                        <q-item>
+                            <q-item-section>Tax</q-item-section>
+                            <q-item-section avatar>
+                                £{{ totalTax }}
                             </q-item-section>
                         </q-item>
                     </q-item-section>
                 </q-item>
+                <q-item-label>
+                    <!-- Display the button to create or edit the order -->
+                    <q-btn color="orange" class="full-width" label="Create order" @click="orderCreateUpdate"
+                        v-if="newOrder == true" />
+                    <q-btn color="blue" class="full-width" label="Edit" @click="orderCreateUpdate" v-else />
+                </q-item-label>
             </q-list>
         </div>
     </q-page>
 </template>
 
 <script setup>
-import { defineComponent, watch } from "vue";
-import { mdiPrinterCheck } from '@mdi/js';
+import { defineComponent, watch, onMounted } from "vue";
+import { mdiCircleEditOutline } from '@mdi/js';
 import productItem from "./components/ProductLine";
+import { useRoute, useRouter } from 'vue-router'
+// Route Reference
+const route = useRoute();
+const router = useRouter()
 
 // import the endpoint
 import { url } from "../../boot/endpoint";
@@ -65,8 +89,9 @@ let searchProductCode = $ref(null);
 
 // Product list
 let products = $ref([]);
+let newOrder = $ref(true);
 
-// load the search results
+// Product search
 const productSearch = async () => {
     await axios.post(url('product/search'), {
         search: searchProductCode
@@ -96,6 +121,7 @@ const removeProduct = (uniqueKey) => {
         }
     }
 };
+
 // Sync products
 const syncProduct = (product) => {
     for (const [key, value] of Object.entries(products)) {
@@ -104,6 +130,84 @@ const syncProduct = (product) => {
         }
     }
 }
+
+// On product update
+watch(products, async (newProduct, oldProduct) => {
+    calculateTotals();
+});
+// Totals variables
+let total = $ref(0);
+let totalTax = $ref(0);
+let subTotal = $ref(0);
+
+// Create a function to calculate the totals
+const calculateTotals = () => {
+    // Clear the totals
+    total = 0;
+    totalTax = 0;
+    subTotal = 0;
+
+    // Loop the products and calculate the totals
+    for (const [key, value] of Object.entries(products)) {
+        let tax = (value.final_price / 100) * value.tax;
+        total += parseFloat(value.final_price);
+        totalTax += parseFloat(tax);
+        subTotal += parseFloat(value.final_price - tax);
+    }
+
+    // Format the numbers
+    total = total.toFixed(2);
+    totalTax = totalTax.toFixed(2);
+    subTotal = subTotal.toFixed(2);
+    // Add the currency symbol
+    total = total;
+    totalTax = totalTax;
+    subTotal = subTotal;
+}
+
+// function to create the order or edit the order
+
+const orderCreateUpdate = async () => {
+
+    let orderRoute = null;
+    if (newOrder == true) {
+        orderRoute = url('order/create');
+    } else {
+        orderRoute = url('order/edit/' + orderId);
+    }
+
+    await axios.post(orderRoute, {
+        order_name: orderName,
+        products: products,
+        total: total,
+        total_tax: totalTax,
+        sub_total: subTotal,
+    })
+        .then(function (response) {
+            const orderProducts = JSON.parse(response.data.data.raw_line);
+            orderName = response.data.data.order_name;
+            products = orderProducts;
+            total = response.data.data.total;
+            totalTax = response.data.data.tax;
+            subTotal = response.data.data.subtotal;
+            newOrder = false;
+            orderId = response.data.data.id;
+        });
+};
+
+let orderId = $ref(null);
+
+// Check if we are loading a order or creating a new one
+onMounted(() => {
+    // Get the order id from the url
+    let order = route.query.order ?? null;
+    if (order) {
+        newOrder = false;
+    } else {
+        newOrder = true;
+        orderId = order;
+    }
+});
 
 </script>
 
