@@ -33,34 +33,73 @@
                 <!-- Product list -->
                 <product-item v-for="(item, index) in products" :key="index" :qtyEdit="false" :productInfo="item"
                     :newProduct="false" @removeProduct="removeProduct" @productSync="syncProduct" />
-                <q-item>
-                    <q-item-section>
-                        <q-item-label>Totals</q-item-label>
-                        <q-item>
-                            <q-item-section>Total</q-item-section>
-                            <q-item-section avatar>
-                                £{{ total }}
-                            </q-item-section>
-                        </q-item>
-                        <q-item>
-                            <q-item-section>Sub Total</q-item-section>
-                            <q-item-section avatar>
-                                £{{ subTotal }}
-                            </q-item-section>
-                        </q-item>
-                        <q-item>
-                            <q-item-section>Tax</q-item-section>
-                            <q-item-section avatar>
-                                £{{ totalTax }}
-                            </q-item-section>
-                        </q-item>
-                    </q-item-section>
-                </q-item>
+                <q-separator spaced />
+                <q-expansion-item expand-separator icon="money" :label="'Totals'" :caption="'£' + total">
+                    <q-card>
+                        <q-card-section>
+                            <q-item>
+                                <q-item-section>
+                                    <q-item-label>Totals</q-item-label>
+                                    <q-item>
+                                        <q-item-section>Total</q-item-section>
+                                        <q-item-section avatar>
+                                            £{{ total }}
+                                        </q-item-section>
+                                    </q-item>
+                                    <q-item>
+                                        <q-item-section>Sub Total</q-item-section>
+                                        <q-item-section avatar>
+                                            £{{ subTotal }}
+                                        </q-item-section>
+                                    </q-item>
+                                    <q-item>
+                                        <q-item-section>Tax</q-item-section>
+                                        <q-item-section avatar>
+                                            £{{ totalTax }}
+                                        </q-item-section>
+                                    </q-item>
+                                </q-item-section>
+                            </q-item>
+                        </q-card-section>
+                    </q-card>
+                </q-expansion-item>
+                <q-expansion-item expand-separator icon="money" label="Balance" :caption="'£' + orderBalance">
+                    <q-card>
+                        <q-card-section>
+                            <q-item>
+                                <q-item-section>
+                                    <q-item v-for="(item, index) in paymentHistory" :key="index" clickable v-ripple>
+                                        <q-item-section>{{ item.status }}</q-item-section>
+                                        <q-item-section avatar>
+                                            {{ item.formatted_amount }}
+                                        </q-item-section>
+                                    </q-item>
+                                    <q-item>
+                                        <q-item-section>Balance</q-item-section>
+                                        <q-item-section avatar>
+                                            £{{ orderBalance }}
+                                        </q-item-section>
+                                    </q-item>
+                                </q-item-section>
+                            </q-item>
+                        </q-card-section>
+                    </q-card>
+                </q-expansion-item>
+                <q-separator spaced />
+                <q-expansion-item expand-separator icon="money" label="Payments" v-if="newOrder == false">
+                    <q-card>
+                        <q-card-section>
+                            <paymentCalculator :order="orderId" :currentBalance="2.20" @refresh="refreshProduct" />
+                        </q-card-section>
+                    </q-card>
+                </q-expansion-item>
                 <q-item-label>
                     <!-- Display the button to create or edit the order -->
                     <q-btn color="orange" class="full-width" label="Create order" @click="orderCreateUpdate"
                         v-if="newOrder == true" />
                     <q-btn color="blue" class="full-width" label="Edit" @click="orderCreateUpdate" v-else />
+                    <q-btn color="red" class="full-width" label="Close Order" @click="orderCreateUpdate"
+                        v-if="orderBalance == 0" />
                 </q-item-label>
             </q-list>
         </div>
@@ -71,6 +110,7 @@
 import { defineComponent, watch, onMounted } from "vue";
 import { mdiCircleEditOutline } from '@mdi/js';
 import productItem from "./components/ProductLine";
+import paymentCalculator from "./components/calculator/calculator";
 import { useRoute, useRouter } from 'vue-router'
 // Route Reference
 const route = useRoute();
@@ -166,8 +206,11 @@ const calculateTotals = () => {
     subTotal = subTotal;
 }
 
-// function to create the order or edit the order
+// Payment history variables
+let paymentHistory = $ref([]);
+let orderBalance = $ref(0);
 
+// function to create the order or edit the order
 const orderCreateUpdate = async () => {
 
     let orderRoute = null;
@@ -193,11 +236,32 @@ const orderCreateUpdate = async () => {
             total = response.data.data.formatted_total;
             totalTax = response.data.data.formatted_tax;
             subTotal = response.data.data.formatted_subtotal;
+            paymentHistory = response.data.data.payments;
+            orderBalance = response.data.data.formatted_balance;
             // On save we return the order id and we can use it to edit the order
             newOrder = false;
             orderId = response.data.data.id;
         });
 };
+
+
+const refreshProduct = async () => {
+    axios.post(url('order/get/' + orderId))
+        .then(function (response) {
+            const orderProducts = JSON.parse(response.data.data.raw_line);
+            products = orderProducts;
+            orderName = response.data.data.order_name;
+            total = response.data.data.formatted_total;
+            totalTax = response.data.data.formatted_tax;
+            subTotal = response.data.data.formatted_subtotal;
+            paymentHistory = response.data.data.payments;
+            orderBalance = response.data.data.formatted_balance;
+            // On save we return the order id and we can use it to edit the order
+            newOrder = false;
+            orderId = response.data.data.id;
+        });
+};
+
 
 let orderId = $ref(null);
 
@@ -207,9 +271,11 @@ onMounted(() => {
     let order = route.query.order ?? null;
     if (order) {
         newOrder = false;
+        orderId = order;
+        refreshProduct();
+
     } else {
         newOrder = true;
-        orderId = order;
     }
 });
 

@@ -25,19 +25,19 @@
                 <Button label="4" value="4" @handleClick="addSingleValue" />
                 <Button label="5" value="5" @handleClick="addSingleValue" />
                 <Button label="6" value="6" @handleClick="addSingleValue" />
-                <Button label="Cash" value="/" operation @handleClick="setOperation" />
+                <Button label="Cash" value="/" operation @handleClick="makePayment('cash')" />
             </div>
             <div class="keypad-row">
                 <Button label="1" value="1" @handleClick="addSingleValue" />
                 <Button label="2" value="2" @handleClick="addSingleValue" />
                 <Button label="3" value="3" @handleClick="addSingleValue" />
-                <Button label="Card" value="*" operation @handleClick="setOperation" />
+                <Button label="Card" value="*" operation @handleClick="makePayment('card')" />
             </div>
             <div class="keypad-row">
                 <Button label="0" value="0" @handleClick="addSingleValue" />
                 <Button label="." value="." @handleClick="addSingleValue" />
                 <Button label="00" value="00" @handleClick="addSingleValue" />
-                <Button label="Other" value="-" operation @handleClick="setOperation" />
+                <Button label="Other" value="-" operation @handleClick="makePayment('other')" />
             </div>
         </div>
     </div>
@@ -45,10 +45,23 @@
 
 <script setup >
 
+import { defineComponent, watch, onMounted } from "vue";
 import Button from "../calculator/calculatorButton.vue";
+import { useRoute, useRouter } from 'vue-router'
+// Route Reference
+const route = useRoute();
+const router = useRouter()
+
+// import the endpoint
+import { url } from "../../../../boot/endpoint";
+// Import the axios
+import { api } from "../../../../boot/axiosAuth";
+const axios = api;
+// Import the quasar framework notifier
+import { Notify } from 'quasar';
 
 // Create a define props with computed properties
-const myProps = defineProps({
+const props = defineProps({
     order: {
         type: String,
         default: '',
@@ -59,7 +72,25 @@ const myProps = defineProps({
     }
 });
 
-let currentValue = $ref('0.00');
+let currentValue = $ref(props.currentBalance ? props.currentBalance : '0.00');
+
+// Define the product events
+const emit = defineEmits(["refresh"]);
+
+const makePayment = async (type) => {
+    await axios.post(url('make/payment/' + props.order), {
+        payment_type: type,
+        amount: parseFloat(currentValue),
+    })
+        .then(function (response) {
+            Notify.create({
+                message: 'Payment made successfully',
+                color: 'green'
+            });
+        });
+
+    emit("refresh");
+};
 
 /**
  *
