@@ -29,7 +29,12 @@
                             <q-separator />
 
                             <q-card-actions>
-                                <q-btn flat color="primary">
+                                <q-btn flat color="primary" :to="{
+                                    name: 'system-mode',
+                                    query: {
+                                        type: 'bar'
+                                    }
+                                }">
                                     Select
                                 </q-btn>
                             </q-card-actions>
@@ -62,7 +67,12 @@
                             <q-separator />
 
                             <q-card-actions>
-                                <q-btn flat color="primary">
+                                <q-btn flat color="primary" :to="{
+                                    name: 'system-mode',
+                                    query: {
+                                        type: 'kitchen'
+                                    }
+                                }">
                                     Select
                                 </q-btn>
                             </q-card-actions>

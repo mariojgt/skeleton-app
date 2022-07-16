@@ -55,12 +55,12 @@ export default [
         ],
         beforeEnter: [auth.checkAuth]
     },
-    // Bar
+    // System Mode
     {
-        path: "/bar",
+        path: "/mode",
         component: () => import("layouts/MainLayout.vue"),
         children: [
-            { path: "", component: () => import("src/pages/barMode/Index.vue") },
+            { name: "system-mode", path: "index", component: () => import("src/pages/systemMode/Index.vue") },
         ],
         beforeEnter: [auth.checkAuth]
     },
@@ -77,14 +77,5 @@ export default [
             },
         ],
         beforeEnter: [auth.checkAuth]
-    },
-    // Kitchen
-    {
-        path: "/kitchen",
-        component: () => import("layouts/MainLayout.vue"),
-        children: [
-            { path: "", component: () => import("src/pages/kitchenMode/Index.vue") },
-        ],
-        beforeEnter: [auth.checkAuth]
-    },
+    }
 ];

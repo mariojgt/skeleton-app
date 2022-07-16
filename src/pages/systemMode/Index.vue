@@ -9,7 +9,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <p>Bar</p>
+                    <h4>{{ type }}</h4>
                 </div>
                 <div class="col-md-6">
                     <div class="q-gutter-md">
@@ -72,6 +72,10 @@ import { api } from "../../boot/axiosAuth";
 const axios = api;
 // Import the quasar framework notifier
 import { Notify } from 'quasar';
+import { useRoute, useRouter } from 'vue-router'
+// Route Reference
+const route = useRoute();
+const router = useRouter();
 // Import vue onMounted
 import { onMounted, watch } from "vue";
 import { mdiPrinterCheck } from '@mdi/js';
@@ -82,6 +86,7 @@ import ticketCompleted from "../../components/ticket/TicketCompleted";
 // The display mode
 const options = ['half', 'full'];
 let option = $ref('half');
+let type = $ref('bar');
 
 // The section or till
 let sectionOptions = $ref([]);
@@ -89,7 +94,7 @@ let sectionOption = $ref(null);
 
 const loadTillInformation = async () => {
     await axios.post(url('tills'), {
-        section: 'bar'
+        section: type
     })
         .then(function (response) {
             sectionOptions = [];
@@ -108,7 +113,6 @@ const loadTillInformation = async () => {
             });
         });
 };
-loadTillInformation();
 
 // Fetch live data from the server
 let liveProducts = $ref([]);
@@ -128,12 +132,6 @@ const fetchLiveProducts = async () => {
             });
     }
 };
-
-onMounted(() => {
-    setTimeout(() => {
-        fetchLiveProducts();
-    }, 500);
-});
 
 // When the ticket is printed
 const printTicket = async (ticket) => {
@@ -170,6 +168,21 @@ const completedItems = async () => {
             });
     }
 };
+
+
+const boot = async () => {
+    // Get the email from the URL
+    type = route.query.type ?? '';
+    await loadTillInformation();
+    await fetchLiveProducts();
+};
+
+onMounted(() => {
+    // Set timeout async
+    setTimeout(() => {
+        boot();
+    }, 500);
+});
 
 </script>
 
