@@ -16,13 +16,19 @@
                                 </tr>
                                 <tr>
                                     <th class="text-left">Name</th>
+                                    <th class="text-left">Till</th>
                                     <th class="text-right">Is Active</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(item, index) in categories" :key="index">
                                     <td class="text-left">
-                                        <q-input filled v-model="categories[index].name" label="Till Name"
+                                        <q-input filled v-model="categories[index].name" label="Name"
+                                            @blur="updateInformation(index)" />
+                                    </td>
+                                    <td class="text-left">
+                                        <q-select filled v-model="categories[index].till_id" :options="tillOptions"
+                                            use-chips stack-label label="Till" color="orange"
                                             @blur="updateInformation(index)" />
                                     </td>
                                     <td class="text-right">
@@ -51,6 +57,8 @@
 
                 <q-card-section class="q-pt-none">
                     <q-input filled v-model="name" label="Name" />
+                    <q-select filled v-model="tillId" :options="tillOptions" use-chips stack-label label="Till"
+                        color="orange" />
                     <q-toggle label="Is Enable" v-model="isActive" />
 
                 </q-card-section>
@@ -104,6 +112,7 @@ onMounted(() => {
 const updateInformation = async (arrayIndex) => {
     await axios.patch(url('category/update/' + categories[arrayIndex].id), {
         name: categories[arrayIndex].name,
+        till_id: categories[arrayIndex].till_id,
         is_active: categories[arrayIndex].is_active,
     })
         .then(function (response) {
@@ -119,10 +128,12 @@ let createNew = $ref(false);
 
 let name = $ref('');
 let isActive = $ref(true);
+let tillId = $ref(null);
 
 const createInformation = async () => {
     await axios.post(url('category/create'), {
         name: name,
+        till_id: tillId,
         is_active: isActive
     })
         .then(function (response) {
@@ -133,4 +144,26 @@ const createInformation = async () => {
         });
     loadInformation();
 };
+
+
+
+// Till Options
+let tillOptions = $ref([]);
+const loadCategory = async () => {
+    await axios.post(url('tills'))
+        .then(function (response) {
+            tillOptions = [];
+            for (const [key, value] of Object.entries(response.data.data)) {
+                tillOptions.push({
+                    label: value.name,
+                    value: value.id
+                });
+            }
+            Notify.create({
+                message: 'Category loaded',
+                color: 'green'
+            });
+        });
+};
+loadCategory();
 </script>

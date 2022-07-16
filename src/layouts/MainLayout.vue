@@ -81,16 +81,16 @@ const linksList = [
         link: "/product/index",
     },
     {
+        title: "Category",
+        caption: "category",
+        icon: "code",
+        link: "/category/index",
+    },
+    {
         title: "Order",
         caption: "Orders",
         icon: "recipe",
         link: "/order/index",
-    },
-    {
-        title: "Forum",
-        caption: "forum.quasar.dev",
-        icon: "record_voice_over",
-        link: "https://forum.quasar.dev",
     },
     {
         title: "Twitter",

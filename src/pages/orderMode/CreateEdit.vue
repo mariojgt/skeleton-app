@@ -9,7 +9,7 @@
                             <q-input v-model="searchProductCode" filled color="orange" label="Search Product" />
                         </q-item-label>
                         <q-item-label caption>
-                            <q-btn color="teal" class="full-width" label="Search" @click="productSearch" />
+                            <q-btn color="orange" class="full-width" label="Search" @click="productSearch" />
                         </q-item-label>
                     </q-item-section>
                 </q-item>
@@ -34,7 +34,8 @@
                 <product-item v-for="(item, index) in products" :key="index" :qtyEdit="false" :productInfo="item"
                     :newProduct="false" @removeProduct="removeProduct" @productSync="syncProduct" />
                 <q-separator spaced />
-                <q-expansion-item expand-separator icon="money" :label="'Totals'" :caption="'£' + total">
+                <q-expansion-item expand-separator icon="money" :label="'Totals'" :caption="'£' + total"
+                    class="shadow-1 overflow-hidden bg-orange text-white">
                     <q-card>
                         <q-card-section>
                             <q-item>
@@ -63,31 +64,9 @@
                         </q-card-section>
                     </q-card>
                 </q-expansion-item>
-                <q-expansion-item expand-separator icon="money" label="Balance" :caption="'£' + orderBalance">
-                    <q-card>
-                        <q-card-section>
-                            <q-item>
-                                <q-item-section>
-
-                                    <q-item v-for="(item, index) in paymentHistory" :key="index" clickable v-ripple>
-                                        <q-item-section>
-                                            <q-item-label>{{ item.type }}</q-item-label>
-                                            <!-- <q-item-label caption>{{ item.type }}</q-item-label> -->
-                                            <q-badge color="teal" :label="item.ago" />
-                                        </q-item-section>
-                                        <q-item-section side top>
-                                            <q-badge color="green" :label="'£' + item.formatted_amount"
-                                                v-if="item.formatted_amount >= 0" />
-                                            <q-badge color="red" :label="'£' + item.formatted_amount" v-else />
-                                        </q-item-section>
-                                    </q-item>
-                                </q-item-section>
-                            </q-item>
-                        </q-card-section>
-                    </q-card>
-                </q-expansion-item>
-                <q-separator spaced />
-                <q-expansion-item expand-separator icon="money" label="Payments" v-if="newOrder == false">
+                <balanceHistory :orderBalance="orderBalance" :paymentHistory="paymentHistory" />
+                <q-expansion-item expand-separator icon="money" label="Pay" v-if="newOrder == false"
+                    class="shadow-1 overflow-hidden bg-teal text-white">
                     <q-card>
                         <q-card-section>
                             <paymentCalculator :order="orderId"
@@ -96,12 +75,14 @@
                     </q-card>
                 </q-expansion-item>
                 <q-item-label>
-                    <!-- Display the button to create or edit the order -->
-                    <q-btn color="orange" class="full-width" label="Create order" @click="orderCreateUpdate"
-                        v-if="newOrder == true" />
-                    <q-btn color="blue" class="full-width" label="Edit" @click="orderCreateUpdate" v-else />
-                    <q-btn color="red" class="full-width" label="Close Order" @click="orderCreateUpdate"
-                        v-if="orderBalance == 0 && paymentHistory[0]" />
+                    <div class="q-pa-md q-gutter-sm">
+                        <!-- Display the button to create or edit the order -->
+                        <q-btn color="orange" class="full-width" label="Create order" @click="orderCreateUpdate"
+                            v-if="newOrder == true" />
+                        <q-btn color="blue" class="full-width" label="Edit" @click="orderCreateUpdate" v-else />
+                        <q-btn color="red" class="full-width" label="Finalize Order" @click="closeOrder"
+                            v-if="orderBalance == 0 && paymentHistory[0]" />
+                    </div>
                 </q-item-label>
             </q-list>
         </div>
@@ -110,9 +91,10 @@
 
 <script setup>
 import { defineComponent, watch, onMounted } from "vue";
-import { mdiCircleEditOutline } from '@mdi/js';
+import { mdiCircleEditOutline, mdiFormatListCheckbox } from '@mdi/js';
 import productItem from "./components/ProductLine";
 import paymentCalculator from "./components/calculator/calculator";
+import balanceHistory from "./components/paymentHistory";
 import { useRoute, useRouter } from 'vue-router'
 // Route Reference
 const route = useRoute();
@@ -244,6 +226,15 @@ const orderCreateUpdate = async () => {
             newOrder = false;
             orderId = response.data.data.id;
         });
+};
+
+// Close the order
+const closeOrder = async () => {
+    await axios.post(url('order/close/' + orderId))
+        .then(function (response) {
+
+        });
+
 };
 
 // Refresh the product

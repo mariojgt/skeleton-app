@@ -4,7 +4,8 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="q-gutter-md">
-                        <q-select v-model="sectionOption" :options="sectionOptions" label="Section" />
+                        <q-select v-model="sectionOption" :options="sectionOptions" @blur="fetchLiveProducts"
+                            label="Section" />
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -22,16 +23,16 @@
                             <q-card-section>
                                 <div class="row no-wrap items-center">
                                     <div class="col text-h6 ellipsis">
-                                        Current order
+                                        Tickets
                                     </div>
                                 </div>
+                                <refreshLive @refresh="fetchLiveProducts" />
                             </q-card-section>
                             <q-separator />
                             <q-list bordered>
                                 <!-- Ticket arrived -->
-                                <ticket />
-                                <ticket minutes="10" seconds="10" />
-                                <ticket minutes="15" seconds="10" />
+                                <ticket v-for="(item, index) in liveProducts" :key="index" :minutes="item.minute_diff"
+                                    :seconds="item.seconds_diff" :productInfo="item" @print="printTicket" />
                             </q-list>
                         </q-card>
                     </div>
@@ -49,7 +50,7 @@
                             </q-card-section>
                             <q-separator />
                             <q-list bordered>
-                                <!-- Ticket arrived -->
+                                <!-- Ticket completed -->
                                 <ticketCompleted />
                                 <ticketCompleted completedTime="15:02" />
                                 <ticketCompleted />
@@ -66,10 +67,18 @@
 </template>
 
 <script setup>
-import { defineComponent } from "vue";
-
+// import the endpoint
+import { url } from "../../boot/endpoint";
+// Import the axios
+import { api } from "../../boot/axiosAuth";
+const axios = api;
+// Import the quasar framework notifier
+import { Notify } from 'quasar';
+// Import vue onMounted
+import { onMounted, watch } from "vue";
 import { mdiPrinterCheck } from '@mdi/js';
 import ticket from "../../components/ticket/Ticket";
+import refreshLive from "../../components/ticket/LiveFetchProgress";
 import ticketCompleted from "../../components/ticket/TicketCompleted";
 
 // The display mode
@@ -77,8 +86,71 @@ const options = ['half', 'full'];
 let option = $ref('half');
 
 // The section or till
-const sectionOptions = ['till01', 'juice', 'desert'];
-let sectionOption = $ref('till01');
+let sectionOptions = $ref([]);
+let sectionOption = $ref(null);
+
+const loadTillInformation = async () => {
+    await axios.post(url('tills'), {
+        section: 'bar'
+    })
+        .then(function (response) {
+            sectionOptions = [];
+            for (const [key, value] of Object.entries(response.data.data)) {
+                sectionOptions.push(
+                    {
+                        label: value.name,
+                        value: value.id
+                    }
+                );
+            }
+            sectionOption = sectionOptions[0];
+            Notify.create({
+                message: 'Till loaded',
+                color: 'green'
+            });
+        });
+};
+loadTillInformation();
+
+// Fetch live data from the server
+let liveProducts = $ref([]);
+const fetchLiveProducts = async () => {
+    if (sectionOption) {
+        await axios.get(url('live/products/' + sectionOption.value))
+            .then(function (response) {
+                liveProducts = [];
+                setTimeout(() => {
+                    liveProducts = response.data.data;
+
+                    Notify.create({
+                        message: 'Live Products',
+                        color: 'green'
+                    });
+                }, 100);
+            });
+    }
+};
+
+onMounted(() => {
+    setTimeout(() => {
+        fetchLiveProducts();
+    }, 500);
+});
+
+// When the ticket is printed
+const printTicket = async (ticket) => {
+    await axios.post(url('live/products/print/' + ticket.id))
+        .then(function (response) {
+            if (response.data.success) {
+                fetchLiveProducts();
+            }
+
+            Notify.create({
+                message: 'Line printed',
+                color: 'green'
+            });
+        });
+};
 
 </script>
 
