@@ -139,10 +139,12 @@ onMounted(() => {
 
 // When the ticket is printed
 const printTicket = async (ticket) => {
+    // Delete the ticket from the live products
+    const productKey = liveProducts.findIndex(x => x.unique_number === ticket.unique_number);
     await axios.post(url('live/products/print/' + ticket.id))
         .then(function (response) {
             if (response.data.success) {
-                fetchLiveProducts();
+                liveProducts.splice(productKey, 1);
             }
 
             Notify.create({

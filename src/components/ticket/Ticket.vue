@@ -8,7 +8,9 @@
 
             <q-item-section>
                 <q-item-label class="q-pa-md si text-h4">
-                    {{ myProps.productInfo.name }} x {{ myProps.productInfo.qty }}
+                    <strong>#{{ myProps.productInfo.order_id }}</strong> {{ myProps.productInfo.name }} x {{
+                            myProps.productInfo.qty
+                    }}
                 </q-item-label>
                 <div class="q-pa-md bg-dark" v-if="myProps.productInfo.modification[0]">
                     <q-list dense bordered padding class="rounded-borders">
@@ -67,7 +69,9 @@ let ticketColor = $ref('bg-green');
 
 // Based in the current minute we change the color of the ticket
 const timerWarming = async (time) => {
-    if (time >= 15) {
+    if (time >= 20) {
+        ticketColor = 'bg-purple';
+    } else if (time >= 15) {
         ticketColor = 'bg-red';
     } else if (time >= 10) {
         ticketColor = 'bg-orange';
