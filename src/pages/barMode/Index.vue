@@ -47,15 +47,13 @@
                                         Completed Order
                                     </div>
                                 </div>
+                                <refreshLive @refresh="completedItems" :refreshIncrease="0.01" />
                             </q-card-section>
                             <q-separator />
                             <q-list bordered>
                                 <!-- Ticket completed -->
-                                <ticketCompleted />
-                                <ticketCompleted completedTime="15:02" />
-                                <ticketCompleted />
-                                <ticketCompleted />
-                                <ticketCompleted />
+                                <ticketCompleted v-for="(item, index) in completedProducts" :key="index"
+                                    :productInfo="item" />
                             </q-list>
                         </q-card>
                     </div>
@@ -146,12 +144,31 @@ const printTicket = async (ticket) => {
             if (response.data.success) {
                 liveProducts.splice(productKey, 1);
             }
-
             Notify.create({
                 message: 'Line printed',
                 color: 'green'
             });
         });
+};
+
+
+// Fetch the complete order
+let completedProducts = $ref([]);
+const completedItems = async () => {
+    if (sectionOption) {
+        await axios.post(url('live/products/completed/' + sectionOption.value))
+            .then(function (response) {
+                completedProducts = [];
+                setTimeout(() => {
+                    completedProducts = response.data.data;
+
+                    Notify.create({
+                        message: 'Completed Live Products',
+                        color: 'green'
+                    });
+                }, 100);
+            });
+    }
 };
 
 </script>
