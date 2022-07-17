@@ -12,6 +12,16 @@
                             myProps.productInfo.qty
                     }}
                 </q-item-label>
+                <q-banner dense inline-actions class="text-white bg-red"
+                    v-if="myProps.productInfo.product_allergies[0]">
+                    Allergies
+                    <div class="q-pa-md">
+                        <q-chip clickable color="primary" text-color="white"
+                            v-for="(item, index) in myProps.productInfo.product_allergies" :key="index">
+                            {{ item }}
+                        </q-chip>
+                    </div>
+                </q-banner>
                 <div class="q-pa-md bg-dark" v-if="myProps.productInfo.modification[0]">
                     <q-list dense bordered padding class="rounded-borders">
                         <q-item-label overline>Modifications</q-item-label>

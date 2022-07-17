@@ -210,23 +210,6 @@ const props = defineProps({
     }
 });
 
-watch(
-    () => props.productInfo,
-    (v) => {
-        product = props.productInfo;
-    }
-);
-
-setTimeout(() => {
-    loadExtraInfo();
-}, 1000);
-
-// Load extras, allergies and modifications from the server
-const loadExtraInfo = async () => {
-    product = props.productInfo;
-    product_allergies = product.product_allergies;
-};
-
 // Define the product events
 const emit = defineEmits(["removeProduct", "productSync"]);
 
@@ -238,6 +221,8 @@ onMounted(() => {
     if (product.allergies) {
         allergies = product.allergies;
     }
+    product = props.productInfo;
+    product_allergies = product.product_allergies ?? [];
     syncProduct();
 });
 
