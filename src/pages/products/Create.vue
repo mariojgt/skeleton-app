@@ -51,6 +51,8 @@
                                                 color="orange" />
                                             <q-input v-model="costPrice" type="number" step="0.01" label="Cost Price"
                                                 color="orange" />
+                                            <q-input v-model="tax" type="number" step="0.01" max="100" min="0"
+                                                label="tax" color="orange" />
 
                                             <q-select filled v-model="category" :options="categoryOptions" use-chips
                                                 stack-label label="Category" color="orange" />
@@ -130,6 +132,7 @@ let allergies = $ref(null);
 let price = $ref(null);
 let costPrice = $ref(null);
 let category = $ref(null);
+let tax = $ref(null);
 
 const submitProduct = async () => {
 
@@ -150,6 +153,7 @@ const submitProduct = async () => {
     formData.append('allergies', JSON.stringify(allergies));
     formData.append('price', price);
     formData.append('cost_price', costPrice);
+    formData.append('tax', tax);
     // Append the category to formData
     if (category) {
         formData.append('category_id', category.value);

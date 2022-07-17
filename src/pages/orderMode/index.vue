@@ -22,7 +22,12 @@
                                 <q-card class="my-card bg-primary">
                                     <q-card-section>
                                         <div class="text-h6">
-                                            <q-btn flat>#{{ item.order_name }}</q-btn>
+                                            <q-btn flat :to="{
+                                                name: 'order-create',
+                                                query: {
+                                                    order: item.id
+                                                }
+                                            }">#{{ item.order_name }}</q-btn>
                                         </div>
                                         <div class="text-subtitle2">£{{ item.formatted_total }}</div>
                                     </q-card-section>

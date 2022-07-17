@@ -31,7 +31,7 @@
                 </q-expansion-item> -->
                 <q-separator spaced />
                 <!-- Product list -->
-                <product-item v-for="(item, index) in products" :key="index" :qtyEdit="false" :productInfo="item"
+                <product-item v-for="(item, index) in products" :key="index" :qtyEdit="true" :productInfo="item"
                     :newProduct="false" @removeProduct="removeProduct" @productSync="syncProduct" />
                 <q-separator spaced />
                 <q-expansion-item expand-separator icon="money" :label="'Totals'" :caption="'£' + total"
@@ -232,7 +232,8 @@ const orderCreateUpdate = async () => {
 const closeOrder = async () => {
     await axios.post(url('order/close/' + orderId))
         .then(function (response) {
-
+            // Redirect to the order list
+            router.push('/order/index');
         });
 
 };
@@ -241,8 +242,7 @@ const closeOrder = async () => {
 const refreshProduct = async () => {
     axios.post(url('order/get/' + orderId))
         .then(function (response) {
-            const orderProducts = JSON.parse(response.data.data.raw_line);
-            products = orderProducts;
+            products = JSON.parse(response.data.data.raw_line);
             orderName = response.data.data.order_name;
             total = response.data.data.formatted_total;
             totalTax = response.data.data.formatted_tax;

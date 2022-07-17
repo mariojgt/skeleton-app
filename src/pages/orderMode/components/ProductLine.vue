@@ -60,6 +60,8 @@
                                 <q-btn color="orange" text-color="white" label="Modification"
                                     @click="dialogModification = true" />
                                 <q-btn color="indigo" text-color="white" label="Extras" @click="dialogExtras = true" />
+                                <q-btn color="purple" text-color="white" label="Allergies"
+                                    @click="dialogAllergies = true" />
                                 <q-btn color="green" text-color="white" :label="'£' + finalPrice" />
                             </div>
                         </q-item-label>
@@ -107,7 +109,7 @@
                         </q-item-section>
                     </q-item>
 
-                    <!-- add modification -->
+                    <!--Add modification -->
                     <q-item>
                         <q-item-section>
                             <q-input v-model="modificationText" label="Modification" />
@@ -120,6 +122,33 @@
             </div>
         </q-card>
     </q-dialog>
+    <!-- Product allergies -->
+    <q-dialog v-model="dialogAllergies" position="right">
+        <q-card>
+
+            <div class="q-pa-md" style="max-width: 350px">
+                <q-list bordered separator>
+                    <q-item v-for="(item, index) in product_allergies" :key="index">
+                        <q-item-section>{{ item }}</q-item-section>
+                        <q-item-section avatar>
+                            <q-btn round color="red" icon="remove" @click="removeAllergies(index)" />
+                        </q-item-section>
+                    </q-item>
+
+                    <!--Add productAllergies -->
+                    <q-item>
+                        <q-item-section>
+                            <q-input v-model="productAllergiesText" label="Allergies" />
+                        </q-item-section>
+                        <q-item-section avatar>
+                            <q-btn round color="green" icon="add" @click="addAllergies" />
+                        </q-item-section>
+                    </q-item>
+                </q-list>
+            </div>
+        </q-card>
+    </q-dialog>
+    <!-- Product end allergies -->
     <!-- Product Extras -->
     <q-dialog v-model="dialogExtras" position="right">
         <q-card>
@@ -188,6 +217,16 @@ watch(
     }
 );
 
+setTimeout(() => {
+    loadExtraInfo();
+}, 1000);
+
+// Load extras, allergies and modifications from the server
+const loadExtraInfo = async () => {
+    product = props.productInfo;
+    product_allergies = product.product_allergies;
+};
+
 // Define the product events
 const emit = defineEmits(["removeProduct", "productSync"]);
 
@@ -197,7 +236,7 @@ let product = $ref([]);
 onMounted(() => {
     product = props.productInfo;
     if (product.allergies) {
-        allergies = JSON.parse(product.allergies);
+        allergies = product.allergies;
     }
     syncProduct();
 });
@@ -205,6 +244,7 @@ onMounted(() => {
 // Dialogs
 let dialogQty = $ref(false);
 let dialogModification = $ref(false);
+let dialogAllergies = $ref(false);
 let dialogExtras = $ref(false);
 let dialogProductDiscount = $ref(false);
 
@@ -224,6 +264,24 @@ const removeModification = async (index) => {
     modification.splice(index, 1);
     await syncProduct();
 };
+
+// Allergies
+let product_allergies = $ref([]);
+let productAllergiesText = $ref(null);
+
+const addAllergies = async () => {
+    if (productAllergiesText) {
+        product_allergies.push(productAllergiesText);
+        productAllergiesText = null;
+        await syncProduct();
+    }
+};
+
+const removeAllergies = async (index) => {
+    product_allergies.splice(index, 1);
+    await syncProduct();
+};
+// Allergies end
 
 // Qty dialog
 let qty = $ref(1);
@@ -289,6 +347,7 @@ const syncProduct = async () => {
     product.qty = qty;
     product.modification = modification;
     product.final_price = finalPrice;
+    product.product_allergies = product_allergies;
     emit("productSync", product);
 };
 

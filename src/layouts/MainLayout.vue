@@ -11,7 +11,7 @@
                 </q-toolbar-title>
 
                 <div class="q-pa-sm">
-                    <q-btn-dropdown color="orange">
+                    <q-btn-dropdown color="orange" flat>
                         <template v-slot:label>
                             <div class="row items-center no-wrap">
                                 <q-avatar>

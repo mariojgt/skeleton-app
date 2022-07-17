@@ -135,7 +135,8 @@ onMounted(async () => {
 
 const loadProductInfo = async () => {
     await axios.post(url('product/search'), {
-        search: route.query.product
+        search: route.query.product,
+        read: true,
     })
         .then(function (response) {
             productInfo = response.data.data;
