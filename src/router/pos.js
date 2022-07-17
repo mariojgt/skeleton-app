@@ -72,6 +72,7 @@ export default [
             { path: "index", component: () => import("src/pages/orderMode/Index.vue") },
             {
                 path: "create-edit",
+                name: "order-create",
                 component: () => import("src/pages/orderMode/CreateEdit.vue"),
                 parameters: { order: String },
             },
