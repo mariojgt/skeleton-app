@@ -69,7 +69,7 @@ export default [
         path: "/order",
         component: () => import("layouts/MainLayout.vue"),
         children: [
-            { path: "index", component: () => import("src/pages/orderMode/Index.vue") },
+            { name: 'order-index', path: "index", component: () => import("src/pages/orderMode/Index.vue") },
             {
                 path: "create-edit",
                 name: "order-create",

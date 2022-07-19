@@ -106,7 +106,9 @@
                             <q-separator />
 
                             <q-card-actions>
-                                <q-btn flat color="primary">
+                                <q-btn flat color="primary" :to="{
+                                    name: 'order-index'
+                                }">
                                     Select
                                 </q-btn>
                             </q-card-actions>

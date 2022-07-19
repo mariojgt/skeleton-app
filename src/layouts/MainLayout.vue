@@ -47,7 +47,7 @@
 
         <q-drawer v-model="leftDrawerOpen" bordered>
             <q-list>
-                <q-item-label header> Essential Links </q-item-label>
+                <q-item-label header> System links </q-item-label>
                 <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
             </q-list>
         </q-drawer>
@@ -64,46 +64,46 @@ import * as storage from "../boot/storage";
 // User basic info
 let userInfo = storage.getUserInfo();
 
-import { mdiCashRegister } from '@mdi/js';
+import { mdiCashRegister, mdiInboxMultipleOutline, mdiShape, mdiBriefcase } from '@mdi/js';
 import { defineComponent, ref } from "vue";
 import EssentialLink from "components/EssentialLink";
 const linksList = [
+    {
+        title: "POS",
+        caption: "System POS",
+        icon: mdiInboxMultipleOutline,
+        link: "/pos",
+    },
+    {
+        title: "Order",
+        caption: "System Orders",
+        icon: mdiInboxMultipleOutline,
+        link: "/order/index",
+    },
+    {
+        title: "Order",
+        caption: "System Orders",
+        icon: mdiInboxMultipleOutline,
+        link: "/order/index",
+    },
+    {
+        title: "Product",
+        caption: "Manage Products",
+        icon: mdiBriefcase,
+        link: "/product/index",
+    },
+    {
+        title: "Category",
+        caption: "System Categories",
+        icon: mdiShape,
+        link: "/category/index",
+    },
     {
         title: "Till",
         caption: "Setup, bar, kitchen, and more",
         icon: mdiCashRegister,
         link: "/till/index",
-    },
-    {
-        title: "Product",
-        caption: "product",
-        icon: "code",
-        link: "/product/index",
-    },
-    {
-        title: "Category",
-        caption: "category",
-        icon: "code",
-        link: "/category/index",
-    },
-    {
-        title: "Order",
-        caption: "Orders",
-        icon: "recipe",
-        link: "/order/index",
-    },
-    {
-        title: "Twitter",
-        caption: "@quasarframework",
-        icon: "rss_feed",
-        link: "https://twitter.quasar.dev",
-    },
-    {
-        title: "Facebook",
-        caption: "@QuasarFramework",
-        icon: "public",
-        link: "https://facebook.quasar.dev",
-    },
+    }
     // {
     //     title: "Logout",
     //     icon: "favorite",
