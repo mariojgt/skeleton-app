@@ -125,7 +125,6 @@
     <!-- Product allergies -->
     <q-dialog v-model="dialogAllergies" position="right">
         <q-card>
-
             <div class="q-pa-md" style="max-width: 350px">
                 <q-list bordered separator>
                     <q-item v-for="(item, index) in product_allergies" :key="index">
@@ -134,7 +133,6 @@
                             <q-btn round color="red" icon="remove" @click="removeAllergies(index)" />
                         </q-item-section>
                     </q-item>
-
                     <!--Add productAllergies -->
                     <q-item>
                         <q-item-section>
@@ -142,6 +140,15 @@
                         </q-item-section>
                         <q-item-section avatar>
                             <q-btn round color="green" icon="add" @click="addAllergies" />
+                        </q-item-section>
+                    </q-item>
+                    <!-- Product options -->
+                    <q-item v-for="(item, index) in allergies" :key="index">
+                        <q-item-section>
+                            {{ item }}
+                        </q-item-section>
+                        <q-item-section avatar>
+                            <q-btn round color="green" icon="add" @click="addAllergies(item)" />
                         </q-item-section>
                     </q-item>
                 </q-list>
@@ -152,7 +159,6 @@
     <!-- Product Extras -->
     <q-dialog v-model="dialogExtras" position="right">
         <q-card>
-
             <div class="q-pa-md" style="max-width: 350px">
                 <q-list bordered separator>
                     <q-item v-for="(item, index) in extras" :key="index">
@@ -254,12 +260,16 @@ const removeModification = async (index) => {
 let product_allergies = $ref([]);
 let productAllergiesText = $ref(null);
 
-const addAllergies = async () => {
-    if (productAllergiesText) {
-        product_allergies.push(productAllergiesText);
-        productAllergiesText = null;
-        await syncProduct();
+const addAllergies = async (allergies = null) => {
+    if (allergies) {
+        product_allergies.push(allergies);
+    } else {
+        if (productAllergiesText) {
+            product_allergies.push(productAllergiesText);
+            productAllergiesText = null;
+        }
     }
+    await syncProduct();
 };
 
 const removeAllergies = async (index) => {

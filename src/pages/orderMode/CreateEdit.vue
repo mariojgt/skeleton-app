@@ -13,7 +13,7 @@
                         </q-item-label>
                     </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple>
+                <q-item clickable v-ripple class="q-pa-md q-gutter-md">
                     <q-item-section>
                         <q-item-label>Order / Table name</q-item-label>
                         <q-item-label caption>
@@ -34,56 +34,63 @@
                 <product-item v-for="(item, index) in products" :key="index" :qtyEdit="true" :productInfo="item"
                     :newProduct="false" @removeProduct="removeProduct" @productSync="syncProduct" />
                 <q-separator spaced />
-                <q-expansion-item expand-separator icon="money" :label="'Totals'" :caption="'£' + total"
-                    class="shadow-1 overflow-hidden bg-orange text-white">
-                    <q-card>
-                        <q-card-section>
-                            <q-item>
-                                <q-item-section>
-                                    <q-item-label>Totals</q-item-label>
-                                    <q-item>
-                                        <q-item-section>Total</q-item-section>
-                                        <q-item-section avatar>
-                                            £{{ total }}
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-item>
-                                        <q-item-section>Sub Total</q-item-section>
-                                        <q-item-section avatar>
-                                            £{{ subTotal }}
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-item>
-                                        <q-item-section>Tax</q-item-section>
-                                        <q-item-section avatar>
-                                            £{{ totalTax }}
-                                        </q-item-section>
-                                    </q-item>
-                                </q-item-section>
-                            </q-item>
-                        </q-card-section>
-                    </q-card>
-                </q-expansion-item>
-                <balanceHistory :orderBalance="orderBalance" :paymentHistory="paymentHistory" />
-                <q-expansion-item expand-separator icon="money" label="Pay" v-if="newOrder == false"
-                    class="shadow-1 overflow-hidden bg-teal text-white">
-                    <q-card>
-                        <q-card-section>
-                            <paymentCalculator :order="orderId"
-                                :currentBalance="orderBalance == 0 ? total : orderBalance" @refresh="refreshProduct" />
-                        </q-card-section>
-                    </q-card>
-                </q-expansion-item>
-                <q-item-label>
-                    <div class="q-pa-md q-gutter-sm">
-                        <!-- Display the button to create or edit the order -->
-                        <q-btn color="orange" class="full-width" label="Create order" @click="orderCreateUpdate"
-                            v-if="newOrder == true" />
-                        <q-btn color="blue" class="full-width" label="Edit" @click="orderCreateUpdate" v-else />
-                        <q-btn color="red" class="full-width" label="Finalize Order" @click="closeOrder"
-                            v-if="orderBalance == 0 && paymentHistory[0]" />
-                    </div>
-                </q-item-label>
+                <div class="q-pa-md q-gutter-md">
+                    <!-- Display the totals -->
+                    <q-expansion-item expand-separator icon="money" :label="'Totals'" :caption="'£' + total"
+                        class="shadow-1 overflow-hidden bg-orange text-white">
+                        <q-card>
+                            <q-card-section>
+                                <q-item>
+                                    <q-item-section>
+                                        <q-item-label>Totals</q-item-label>
+                                        <q-item>
+                                            <q-item-section>Total</q-item-section>
+                                            <q-item-section avatar>
+                                                £{{ total }}
+                                            </q-item-section>
+                                        </q-item>
+                                        <q-item>
+                                            <q-item-section>Sub Total</q-item-section>
+                                            <q-item-section avatar>
+                                                £{{ subTotal }}
+                                            </q-item-section>
+                                        </q-item>
+                                        <q-item>
+                                            <q-item-section>Tax</q-item-section>
+                                            <q-item-section avatar>
+                                                £{{ totalTax }}
+                                            </q-item-section>
+                                        </q-item>
+                                    </q-item-section>
+                                </q-item>
+                            </q-card-section>
+                        </q-card>
+                    </q-expansion-item>
+                    <!-- Display the payment history -->
+                    <balanceHistory :orderBalance="orderBalance" :paymentHistory="paymentHistory" />
+                    <!-- Display the pay calculation button -->
+                    <q-expansion-item expand-separator icon="money" label="Pay" v-if="newOrder == false"
+                        class="shadow-1 overflow-hidden bg-teal text-white">
+                        <q-card>
+                            <q-card-section>
+                                <paymentCalculator :order="orderId"
+                                    :currentBalance="orderBalance == 0 ? total : orderBalance"
+                                    @refresh="refreshProduct" />
+                            </q-card-section>
+                        </q-card>
+                    </q-expansion-item>
+                    <!-- The order buttons to create and edit the order -->
+                    <q-item-label>
+                        <div class="q-pa-md q-gutter-sm">
+                            <!-- Display the button to create or edit the order -->
+                            <q-btn color="orange" class="full-width" label="Create order" @click="orderCreateUpdate"
+                                v-if="newOrder == true" />
+                            <q-btn color="blue" class="full-width" label="Edit" @click="orderCreateUpdate" v-else />
+                            <q-btn color="red" class="full-width" label="Finalize Order" @click="closeOrder"
+                                v-if="orderBalance == 0 && paymentHistory[0]" />
+                        </div>
+                    </q-item-label>
+                </div>
             </q-list>
         </div>
     </q-page>
