@@ -104,30 +104,11 @@ const linksList = [
         icon: mdiCashRegister,
         link: "/till/index",
     }
-    // {
-    //     title: "Logout",
-    //     icon: "favorite",
-    //     link: "logout",
-    // },
 ];
+
 let leftDrawerOpen = $ref(false);
+// Open close the left drawer
 const toggleLeftDrawer = async () => {
     leftDrawerOpen = !leftDrawerOpen;
 };
-// export default defineComponent({
-//   name: "MainLayout",
-//   components: {
-//     EssentialLink,
-//   },
-//   setup() {
-//     const leftDrawerOpen = ref(false);
-//     return {
-//       essentialLinks: linksList,
-//       leftDrawerOpen,
-//       toggleLeftDrawer() {
-//         leftDrawerOpen.value = !leftDrawerOpen.value;
-//       },
-//     };
-//   },
-// });
 </script>

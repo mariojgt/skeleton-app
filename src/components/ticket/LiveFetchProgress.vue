@@ -39,7 +39,7 @@ const callRefresh = async () => {
 watch(
     () => progress,
     (v) => {
-        console.log(v >= 1);
+        // If the progress is greater than 1 we can refresh
         if (v >= 1) {
             callRefresh();
         }
