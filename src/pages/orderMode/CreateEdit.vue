@@ -18,6 +18,7 @@
                         <q-item-label>Order / Table name</q-item-label>
                         <q-item-label caption>
                             <q-input v-model="orderName" color="orange" label="Order Name" />
+                            <p class="text-red" v-if="orderName == 13">Table 13 is bad luck.</p>
                         </q-item-label>
                     </q-item-section>
                 </q-item>
@@ -273,7 +274,6 @@ onMounted(() => {
         newOrder = false;
         orderId = order;
         refreshProduct();
-
     } else {
         newOrder = true;
     }

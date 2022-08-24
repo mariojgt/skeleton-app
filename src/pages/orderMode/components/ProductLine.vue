@@ -229,6 +229,7 @@ onMounted(() => {
     }
     product = props.productInfo;
     product_allergies = product.product_allergies ?? [];
+    qty = product.qty ?? 1;
     syncProduct();
 });
 

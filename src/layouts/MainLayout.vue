@@ -10,7 +10,7 @@
                     </q-item>
                 </q-toolbar-title>
 
-                <div class="q-pa-sm">
+                <div class="q-pa-sm" v-if="userInfo">
                     <q-btn-dropdown color="orange" flat>
                         <template v-slot:label>
                             <div class="row items-center no-wrap">
