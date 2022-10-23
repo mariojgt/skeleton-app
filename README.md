@@ -1,4 +1,4 @@
-# Skeleton Pos (pos-skeleton)
+# Skeleton app
 
 This is a point of sale design to wor
 
